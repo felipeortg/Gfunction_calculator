@@ -1,0 +1,34 @@
+# Parameters to calculate the G function
+# Comments with #
+# Format :
+# variable_name *space* variable_value *space* #comment
+# ONE SPACE before and after (in case of comment) variable_value is needed
+
+# Calculation
+evals 1
+folder ../felipe_results/
+
+# Kinematics
+Eimin 2.05
+Eimax 3.8
+
+Efmin 1.825
+Efmax 3.825
+
+Pi 0 0 0
+Pf 0 0 0
+
+# Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
+indices 0 10 10
+
+# Scale and masses
+L_inv_mass 6.0
+m1 1.0
+m2 1.0
+
+# Cut-offs
+cube_num 36
+alpha 0.01234567901 # (1/3)^4
+ccs 27 -35 8 27 # subtraction coeffs int, last is denominator
+LAMB 3 6 # PV masses
+
