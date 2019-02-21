@@ -51,7 +51,7 @@ cube_num = int(cval['cube_num'])
 
 results_folder = cval['folder']
 
-Sum_folder = results_folder + 'Sum_vals/'
+sum_folder = results_folder + 'Sum_vals/'
 
 # -----------------
 # Define constants
@@ -81,11 +81,11 @@ for ll in cval['indices'].split():
     indices.append(nesttemplist)
 
 # Kinematics
-lab_moment_i = [int(ll) for ll in cval['Pi'].split()]
-lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
+lab_moment_i_int = [int(ll) for ll in cval['Pi'].split()]
+lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 
-lab_moment_f = [int(ll) for ll in cval['Pf'].split()]
-lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f)
+lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
+lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
 with open(energ_file, 'r') as f:
@@ -352,11 +352,11 @@ else:
 
 
 #Save the values
-filename = Sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2]*L/(2*np.pi))) + '_vecPf_' + str(int(lab_moment_f[2]*L/(2*np.pi))) + '.npy')
+filename = sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2])  + '_L_' + str(int(L)) + '.npy')
 
-if not os.path.exists(Sum_folder):
-    os.makedirs(Sum_folder)
+if not os.path.exists(sum_folder):
+    os.makedirs(sum_folder)
 
 msgg = np.meshgrid(Eistar, Efstar)
 

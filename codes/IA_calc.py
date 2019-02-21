@@ -91,11 +91,11 @@ else:
     cutoff = m1
 
 # Kinematics
-lab_moment_i = [int(ll) for ll in cval['Pi'].split()]
-lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
+lab_moment_i_int = [int(ll) for ll in cval['Pi'].split()]
+lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 
-lab_moment_f = [int(ll) for ll in cval['Pf'].split()]
-lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f)
+lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
+lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 
 # Energies from file
@@ -698,7 +698,7 @@ else:
 
 #Save the values
 filename = IA_folder + 'IA_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2]*L/(2*np.pi))) + '_vecPf_' + str(int(lab_moment_f[2]*L/(2*np.pi))) + '.npy')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
 
 if not os.path.exists(IA_folder):
     os.makedirs(IA_folder)

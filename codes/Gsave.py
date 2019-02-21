@@ -72,11 +72,11 @@ for ll in cval['indices'].split():
     indices.append(nesttemplist)
 
 # Kinematics
-lab_moment_i = [int(ll) for ll in cval['Pi'].split()]
-lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
+lab_moment_i_int = [int(ll) for ll in cval['Pi'].split()]
+lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 
-lab_moment_f = [int(ll) for ll in cval['Pf'].split()]
-lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f)
+lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
+lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
 with open(energ_file, 'r') as f:
@@ -90,7 +90,7 @@ Efstar = eners[1]
 
 #Get sum values
 sumfilename = sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2])) + '_vecPf_' + str(int(lab_moment_f[2])) + '.txt')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2])  + '_L_' + str(int(L)) + '.npy')
 
 with open(sumfilename, 'r') as f:
 
@@ -99,7 +99,7 @@ with open(sumfilename, 'r') as f:
 
 #Get IN values
 INfilename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2])) + '_vecPf_' + str(int(lab_moment_f[2])) + '.txt')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
 
 with open(INfilename, 'r') as f:
 
@@ -107,7 +107,7 @@ with open(INfilename, 'r') as f:
 
 #Get IA values
 IAfilename = IA_folder + 'IA_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2])) + '_vecPf_' + str(int(lab_moment_f[2])) + '.txt')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
 
 with open(IAfilename, 'r') as f:
 
@@ -137,7 +137,7 @@ IGfunction = np.imag( 1./(q2star_i**(li/2.)) * 1./(q2star_f**(lf/2.)) * (Sum - I
 
 # Save numpy array binaries
 binaryfilename =  G_folder + 'Bin_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2])) + '_vecPf_' + str(int(lab_moment_f[2])) + '.npz')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npz')
 
 with open(binaryfilename, 'w') as f:
     np.savez_compressed(f,Eistar=Eistar, Efstar=Efstar,
@@ -148,7 +148,7 @@ with open(binaryfilename, 'w') as f:
 
 # Save readable data of the sums and integrals
 readblefilename =  G_folder + 'Read_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2])) + '_vecPf_' + str(int(lab_moment_f[2])) + '.csv')
+']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.csv')
 
 
 with open(readblefilename, 'w') as csvfile:
