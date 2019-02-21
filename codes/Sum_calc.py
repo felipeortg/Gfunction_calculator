@@ -345,9 +345,9 @@ else:
         enfin = Ef[mm]
         PP_i = np.concatenate(([enin], lab_moment_i))
         PP_f = np.concatenate(([enfin], lab_moment_f))
-        print 'Sum: ', Eistar[mm], Efstar[mm], '---------'
+
         Summ[mm] = Neq_sum(PP_i, PP_f, alpha, indices)
-        print 'Sum: ', Eistar[mm,nn], Efstar[mm,nn], '---------', Summ[mm]
+        print 'Sum: ', Eistar[mm], Efstar[mm], '---------', Summ[mm]
 
 
 

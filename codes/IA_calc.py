@@ -691,9 +691,9 @@ else:
         enfin = Ef[mm]
         PP_i = np.concatenate(([enin], lab_moment_i))
         PP_f = np.concatenate(([enfin], lab_moment_f))
-        print 'IAcalc: ', Eistar[mm], Efstar[mm], '---------'
+
         I_An[mm] = make_int(PP_i, PP_f, indices)
-        print 'IAcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_An[mm]
+        print 'IAcalc: ', Eistar[mm], Efstar[mm], '---------', I_An[mm]
 
 
 #Save the values

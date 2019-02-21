@@ -16,7 +16,7 @@ shift 0 # 1 for true or 0 to false)
 # intercpt 0
 
 evals 2
-folder ../results/
+folder ../results/test/
 
 # Kinematics
 Eimin 1.8
