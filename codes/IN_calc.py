@@ -1158,7 +1158,7 @@ if axial:
 
 #Save the values
 filename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(int(lab_moment_i[2]*L/(2*np.pi))) + '_vecPf_' + str(int(lab_moment_f[2]*L/(2*np.pi))) + '.txt')
+']_vecPi_' + str(int(lab_moment_i[2]*L/(2*np.pi))) + '_vecPf_' + str(int(lab_moment_f[2]*L/(2*np.pi))) + '.npy')
 
 if not os.path.exists(IN_folder):
     os.makedirs(IN_folder)

@@ -5,8 +5,18 @@
 # ONE SPACE before and after (in case of comment) variable_value is needed
 
 # Calculation
-evals 1
-folder ../felipe_results/
+# You can either do a mesh or a line
+shape mesh # line
+
+# for the mesh you can shift the Ef to avoid errors in IN
+shift 0 # 1 for true or 0 to false)
+
+# for the line you can change the slope and intercept
+# slop 1
+# intercpt 0
+
+evals 2
+folder ../results/
 
 # Kinematics
 Eimin 1.8
@@ -15,8 +25,8 @@ Eimax 3.8
 Efmin 1.825
 Efmax 3.825
 
-Pi 0 0 0
-Pf 0 0 0
+Pi 0 0 1
+Pf 0 0 1
 
 # Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
 indices 0 10 10
@@ -29,4 +39,5 @@ m2 1.0
 # Cut-offs
 alpha 0.01234567901 # (1/3)^4
 cube_num 36
-
+ccs 27 -35 8 27 # subtraction coeffs int, last is denominator
+LAMB 3 6 # PV masses

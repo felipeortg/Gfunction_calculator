@@ -5,12 +5,12 @@
 # ONE SPACE before and after (in case of comment) variable_value is needed
 
 # Calculation
-evals 1
+evals 41
 folder ../felipe_results/
 
 # Kinematics
-Eimin 2.05
-Eimax 3.8
+Eimin 1.84
+Eimax 4.00
 
 Efmin 1.825
 Efmax 3.825
