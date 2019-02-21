@@ -19,6 +19,10 @@ from scipy import special
 # Config file:
 config_file = str(sys.argv[1])
 
+# -----------------
+# Energies file:
+energ_file = str(sys.argv[2])
+
 cval = dict()
 
 with open(config_file, 'r') as f:
@@ -76,9 +80,6 @@ for ll in cval['indices'].split():
 
     indices.append(nesttemplist)
 
-# Evaluation points
-evals = int(cval['evals'])
-
 # Kinematics
 lab_moment_i = [int(ll) for ll in cval['Pi'].split()]
 lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
@@ -86,10 +87,14 @@ lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
 lab_moment_f = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f)
 
+# Energies from file
+with open(energ_file, 'r') as f:
 
-Eistar = np.linspace(float(cval['Eimin']), float(cval['Eimax']), num=evals)
+    eners = np.load(f)
+
+Eistar = eners[0]
  
-Efstar = np.linspace(float(cval['Efmin']), float(cval['Efmax']), num=evals)
+Efstar = eners[1]
 
 Ei = np.sqrt(Eistar**2 + np.dot(lab_moment_i, lab_moment_i))
 Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
@@ -100,11 +105,11 @@ Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
 # -----------------
 
 # Location to get triplets from:
-trip_folder = 'felipe_results/'
+trip_folder = './'
 
 # -----------------
 # Get the array of n triplets
-filename = '../' + trip_folder + 'triplets/n_list_r<' + str(cube_num) + '.txt'
+filename = trip_folder + 'triplets/n_list_r<' + str(cube_num) + '.txt'
 f = open(filename, 'r')
 n_list = pickle.load(f)
 n_arr = np.array(n_list)
@@ -322,15 +327,29 @@ def Neq_sum(P_i, P_f, alpha, index):
 
 
 #CALCULATE STUFF
-print 'alpha ',alpha
-Summ = np.zeros((evals, evals)) # np.zeros(np.shape(Efstar)[0])
-for mm, enin in enumerate(Ei):
-    for nn, enfin in enumerate(Ef):
+print 'Sum alpha ',alpha
+ener_shape = np.shape(Eistar)
+Summ = np.ones(ener_shape) * np.complex(0.,0.)
+
+if len(ener_shape) > 1: # for mesh inputs
+    for mm, enirow in enumerate(Ei):
+        for nn, enin in enumerate(enirow):
+            enfin = Ef[mm,nn]
+            PP_i = np.concatenate(([enin], lab_moment_i))
+            PP_f = np.concatenate(([enfin], lab_moment_f))
+           
+            Summ[mm,nn] = Neq_sum(PP_i, PP_f, alpha, indices)
+            print 'Sum: ', Eistar[mm,nn], Efstar[mm,nn], '---------', Summ[mm,nn]
+else:
+    for mm, enin in enumerate(Ei):
+        enfin = Ef[mm]
         PP_i = np.concatenate(([enin], lab_moment_i))
         PP_f = np.concatenate(([enfin], lab_moment_f))
-        print  Eistar[mm], Efstar[nn], '---------'
-        Summ[mm,nn] = Neq_sum(PP_i, PP_f, alpha, indices)
-        print 'sum', Summ[mm,nn]
+        print 'Sum: ', Eistar[mm], Efstar[mm], '---------'
+        Summ[mm] = Neq_sum(PP_i, PP_f, alpha, indices)
+        print 'Sum: ', Eistar[mm,nn], Efstar[mm,nn], '---------', Summ[mm]
+
+
 
 #Save the values
 filename = Sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
@@ -343,7 +362,7 @@ msgg = np.meshgrid(Eistar, Efstar)
 
 with open(filename, 'w') as f:
 
-    np.save(f,np.array([msgg[0],msgg[1], Summ]))
+    np.save(f,Summ)
 
 
 

@@ -19,6 +19,10 @@ from scipy import optimize
 # Config file:
 config_file = str(sys.argv[1])
 
+# -----------------
+# Energies file:
+energ_file = str(sys.argv[2])
+
 cval = dict()
 
 with open(config_file, 'r') as f:
@@ -86,9 +90,6 @@ else:
     #This is latter multiplied by 10
     cutoff = m1
 
-# Evaluation points
-evals = int(cval['evals'])
-
 # Kinematics
 lab_moment_i = [int(ll) for ll in cval['Pi'].split()]
 lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i)
@@ -97,14 +98,17 @@ lab_moment_f = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f)
 
 
-Eistar = np.linspace(float(cval['Eimin']), float(cval['Eimax']), num=evals)
+# Energies from file
+with open(energ_file, 'r') as f:
+
+    eners = np.load(f)
+
+Eistar = eners[0]
  
-Efstar = np.linspace(float(cval['Efmin']), float(cval['Efmax']), num=evals)
+Efstar = eners[1]
 
 Ei = np.sqrt(Eistar**2 + np.dot(lab_moment_i, lab_moment_i))
 Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
-
-
 
 # Define useful functions
 def y_noie(x, Lam1, Lam2, pm, q2, si, sf):
@@ -389,7 +393,7 @@ def I31_tt(ls, ks):
     AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
     
     xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
+
     if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
         avoid = []
         if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
@@ -667,26 +671,29 @@ def make_int(P_i, P_f, index):
     return integral
 
 
-# Ei = np.sqrt(2.0**2 + np.dot(lab_moment_i, lab_moment_i))
-# Ef = np.sqrt(1.825**2 + np.dot(lab_moment_f, lab_moment_f))
 
-# PP_i = np.concatenate(([Ei], lab_moment_i))
-# PP_f = np.concatenate(([Ef], lab_moment_f))
-
-# print "HERE" , make_int(PP_i, PP_f, indices)
-
-# raise ValueError('si acabo')
 
 #CALCULATE STUFF
-I_An = np.ones((evals, evals))*np.complex(0,0) # np.zeros(np.shape(Efstar)[0])
-for mm, enin in enumerate(Ei):
-    for nn, enfin in enumerate(Ef):
+ener_shape = np.shape(Eistar)
+I_An = np.ones(ener_shape) * np.complex(0.,0.)
+
+if len(ener_shape) > 1: # for mesh inputs
+    for mm, enirow in enumerate(Ei):
+        for nn, enin in enumerate(enirow):
+            enfin = Ef[mm,nn]
+            PP_i = np.concatenate(([enin], lab_moment_i))
+            PP_f = np.concatenate(([enfin], lab_moment_f))
+            
+            I_An[mm,nn] = make_int(PP_i, PP_f, indices)
+            print 'IAcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_An[mm,nn]
+else:
+    for mm, enin in enumerate(Ei):
+        enfin = Ef[mm]
         PP_i = np.concatenate(([enin], lab_moment_i))
         PP_f = np.concatenate(([enfin], lab_moment_f))
-        print Eistar[mm], Efstar[nn], '---------'
-        I_An[mm,nn] = make_int(PP_i, PP_f, indices)
-        print 'integral', I_An[mm,nn]
-
+        print 'IAcalc: ', Eistar[mm], Efstar[mm], '---------'
+        I_An[mm] = make_int(PP_i, PP_f, indices)
+        print 'IAcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_An[mm]
 
 
 #Save the values
@@ -700,5 +707,5 @@ msgg = np.meshgrid(Eistar, Efstar)
 
 with open(filename, 'w') as f:
 
-    np.save(f,np.array([msgg[0],msgg[1], I_An]))
+    np.save(f, I_An)
 
