@@ -5,6 +5,16 @@
 # ONE SPACE before and after (in case of comment) variable_value is needed
 
 # Calculation
+# You can either do a mesh or a line
+shape mesh # line
+
+# for the mesh you can shift the Ef to avoid errors in IN
+shift 0 # 1 for true or 0 to false)
+
+# for the line you can change the slope and intercept
+# slop 1
+# intercpt 0
+
 evals 1
 folder ../felipe_results/
 
