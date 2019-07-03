@@ -141,8 +141,67 @@ def square_4vec(quadvec):
     
         return sqquadvec[0,:] - np.sum(sqquadvec[1:,:],axis=0)
 
+# Singularities of the integrand
+def avoid_points(m1, m2, si, sf, q2):
+
+    # Divergences due to the division
+    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
+    
+    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
+    
+    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
+    
+    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
+    
+    avoid = []
+
+    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
+        
+        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
+            avoid.extend([xxs[0]])
+        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
+            avoid.extend([xxs[1]])
+    
+    # Divergences due to the logarithm
+    # Evaluate at the borders to find sign changes
+    yp0 = y_noie(0, m1, m2, 'p', q2, si, sf)
+    yp1 = y_noie(1, m1, m2, 'p', q2, si, sf)
+
+    ym0 = y_noie(0, m1, m2, 'm', q2, si, sf)
+    ym1 = y_noie(1, m1, m2, 'm', q2, si, sf)
+    
+    if yp0.real * yp1.real < 0:
+        def realy(x):
+            return y_noie(x, m1, m2, 'p', q2, si, sf).real
+
+        avoid.extend([optimize.brentq(realy, 0, 1)])
+
+    if ym0.real * ym1.real < 0:
+        def realy(x):
+            return y_noie(x, m1, m2, 'm', q2, si, sf).real
+
+        avoid.extend([optimize.brentq(realy, 0, 1)])
+
+    if (1 - yp0.real) * (- yp1.real) < 0:
+        def realy(x):
+            return 1 - x - y_noie(x, m1, m2, 'p', q2, si, sf).real
+
+        avoid.extend([optimize.brentq(realy, 0, 1)])        
+
+    if (1 - ym0.real) * (- ym1.real) < 0:
+        def realy(x):
+            return 1 - x - y_noie(x, m1, m2, 'm', q2, si, sf).real
+
+        avoid.extend([optimize.brentq(realy, 0, 1)]) 
+
+            
+    if len(avoid) == 0:
+        avoid = (0.5,)
+
+    return avoid
 
 
+# -----------
 # F functions
 
 # Log function with epsilon handling
@@ -345,25 +404,7 @@ def I00_tt(ls, ks):
     def imagF(x,ls,ks):
         return np.imag(F1_tt(x,ls,ks))
     
-    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
-    
-    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
-    
-    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
-        avoid = []
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
-        if len(avoid) == 0:
-            avoid = (0.5,)
-            
-    else:
-        avoid = (0.5,)
+    avoid = avoid_points(m1, m2, si, sf, q2)
     
     
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
@@ -386,25 +427,7 @@ def I31_tt(ls, ks):
     def imagF(x,ls,ks):
         return x**3 * np.imag(F1_tt(x,ls,ks))
     
-    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
-    
-    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
-    
-    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
-        avoid = []
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
-        if len(avoid) == 0:
-            avoid = (0.5,)
-            
-    else:
-        avoid = (0.5,)
+    avoid = avoid_points(m1, m2, si, sf, q2)
     
     
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
@@ -427,24 +450,7 @@ def I32_tt(ls, ks):
     def imagF(x,ls,ks):
         return np.imag(F4_tt(x,ls,ks))
     
-    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
-    
-    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
-    
-    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
-        avoid = []
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
-        if len(avoid) == 0:
-            avoid = (0.5,)
-    else:
-        avoid = (0.5,)
+    avoid = avoid_points(m1, m2, si, sf, q2)
             
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
     ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
@@ -466,24 +472,7 @@ def I33_tt(ls, ks):
     def imagF(x,ls,ks):
         return x**2 * np.imag(F2_tt(x,ls,ks))
     
-    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
-    
-    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
-    
-    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
-        avoid = []
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
-        if len(avoid) == 0:
-            avoid = (0.5,)
-    else:
-        avoid = (0.5,)
+    avoid = avoid_points(m1, m2, si, sf, q2)
             
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
     ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
@@ -511,18 +500,7 @@ def I34_tt(ls, ks):
     
     AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
     
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
-        avoid = []
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
-        if len(avoid) == 0:
-            avoid = (0.5,)
-    else:
-        avoid = (0.5,)
+    avoid = avoid_points(m1, m2, si, sf, q2)
             
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
     ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]

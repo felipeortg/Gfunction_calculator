@@ -75,9 +75,25 @@ elif cval['shape'] == 'line':
 
     
     Eistar = np.linspace(float(cval['Eimin']), float(cval['Eimax']), num=evals)
-    used_line = 'main_diag'
     pp = [float(cval['slop']), float(cval['intercpt'])]
     Efstar = Efstar(Eistar, pp)
+    
+    
+    with open(ener_file, 'w') as f:
+
+        np.save(f,np.array([Eistar,Efstar]))
+
+elif cval['shape'] == 'lineEf':
+    # Shift Efstar so that IN does not go into error
+    def Eistar(Efstar, par):
+        return par[0] * Efstar + par[1]
+
+    evals = int(cval['evals'])
+
+    
+    Efstar = np.linspace(float(cval['Efmin']), float(cval['Efmax']), num=evals)
+    pp = [float(cval['slop']), float(cval['intercpt'])]
+    Eistar = Eistar(Efstar, pp)
     
     
     with open(ener_file, 'w') as f:

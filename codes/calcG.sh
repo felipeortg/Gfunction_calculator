@@ -1,3 +1,4 @@
+#!/bin/bash
 configfile=$1
 energyfile="Etemp.npy"
 
