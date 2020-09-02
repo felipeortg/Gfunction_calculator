@@ -1,0 +1,13 @@
+There are some places where the functions break, I am not sure why... maybe I should check this sometime
+
+m1 = 1
+m2 = m1
+m1L = 6
+
+vecPi = vecPf = vec(0)
+I_A_[0;10;10](Ei = 1.8, Ef = 3.85)
+
+vecPi = vec(0)
+vecPf = [001]
+I_N_[0;10;10](Ei = 3.8, Ef = 3.98 Pf=1.047)
+the problem seems to come from around thetak = 3.1(1)

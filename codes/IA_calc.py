@@ -222,6 +222,9 @@ def logeps(comp, pm):
 # Generalized antider of the 1 pole integral
 def antiderlog(ymin, ymax, pole, pm):
 
+    if pole == ymin or pole == ymax:
+        return float('nan')
+
     if pm == 'p':
         pm = +1
     else:
@@ -240,10 +243,6 @@ def antiderlog(ymin, ymax, pole, pm):
             return repart + impart
 
         else: # no pole in the domain of integration 
-            if rpole == 0:
-                rpole = 1e-7 
-            elif rpole == 1:
-                rpole = 1 - 1e-7
 
             repart = np.log(np.abs((ymax - rpole) / (ymin - rpole)))
 
