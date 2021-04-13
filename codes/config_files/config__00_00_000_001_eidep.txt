@@ -1,0 +1,43 @@
+# Parameters to calculate the G function
+# Comments with #
+# Format :
+# variable_name *space* variable_value *space* #comment
+# ONE SPACE before and after (in case of comment) variable_value is needed
+
+# Calculation
+# You can either do a mesh or a line
+shape line # mesh
+
+# for the mesh you can shift the Ef to avoid errors in IN
+# shift 1 # 1 for true or 0 to false)
+
+# for the line you can change the slope and intercept
+slop 0
+intercpt 2.05
+
+evals 400
+folder ../results/ppt/
+
+# Kinematics
+Eimin 1.9
+Eimax 2.2
+
+Efmin 1.825
+Efmax 3.825
+
+Pi 0 0 0
+Pf 0 0 1
+
+# Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
+indices n 00 00
+
+# Scale and masses
+L_inv_mass 6.0
+m1 1.0
+m2 1.0
+
+# Cut-offs
+cube_num 36
+alpha 0.01234567901 # (1/3)^4
+ccs 1 1 # subtraction coeffs int, last is denominator
+LAMB # PV masses
