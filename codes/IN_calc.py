@@ -130,6 +130,20 @@ if axial:
 # Useful functions
 # -----------------
 
+# Calculate the square of a Minkowski 4-momentum (+---) metric
+def square_4vec(quadvec):
+    # Can receive a vector of vectors
+    # Must receive temporal, but can receive one, two or three spatial
+    
+    quadvec = np.array(quadvec)
+    
+    if len(quadvec.shape) == 1:
+        return (quadvec[0])**2 - sum(quadvec[1:]**2)
+    else:
+        sqquadvec = quadvec**2
+    
+        return sqquadvec[0,:] - np.sum(sqquadvec[1:,:],axis=0)
+
 # This is zero at the k-value of the canceling pole of the Dr term
 def canceling_pole_Dr_root(k_dum, k_dum_phi, k_dum_th, P_i, P_f, mass1):
 
@@ -245,19 +259,7 @@ def discont_linspace(interval, remov_points, ls_lenght, dist = 2):
 # Define some kinematic common used functions
 # -----------------
 
-# Calculate the square of a Minkowski 4-momentum (+---) metric
-def square_4vec(quadvec):
-    # Can receive a vector of vectors
-    # Must receive temporal, but can receive one, two or three spatial
-    
-    quadvec = np.array(quadvec)
-    
-    if len(quadvec.shape) == 1:
-        return (quadvec[0])**2 - sum(quadvec[1:]**2)
-    else:
-        sqquadvec = quadvec**2
-    
-        return sqquadvec[0,:] - np.sum(sqquadvec[1:,:],axis=0)
+
 
 # Define boost matrix
 # Where boost(p4vector).p4vector = (E^*, vec(0))
