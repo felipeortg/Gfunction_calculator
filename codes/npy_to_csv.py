@@ -34,7 +34,7 @@ If = np.imag(fun)
 
 
 with open(readblefilename, 'w') as csvfile:
-    writer = csv.writer(csvfile, delimiter=' ')
+    writer = csv.writer(csvfile, delimiter=',')
     flatEi = np.ndarray.flatten(Eistar)
     flatR_fun = np.ndarray.flatten(Rf)
     flatI_fun = np.ndarray.flatten(If)
@@ -45,4 +45,3 @@ with open(readblefilename, 'w') as csvfile:
             flatR_fun[n], flatI_fun[n]])
 
 
-        
