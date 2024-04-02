@@ -79,7 +79,7 @@ lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
-with open(energ_file, 'r') as f:
+with open(energ_file, 'rb') as f:
 
     eners = np.load(f)
 
@@ -92,7 +92,7 @@ Efstar = eners[1]
 sumfilename = sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
 ']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2])  + '_L_' + str(int(L)) + '.npy')
 
-with open(sumfilename, 'r') as f:
+with open(sumfilename, 'rb') as f:
 
     Sum = np.load(f)
 
@@ -101,7 +101,7 @@ with open(sumfilename, 'r') as f:
 INfilename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
 ']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
 
-with open(INfilename, 'r') as f:
+with open(INfilename, 'rb') as f:
 
     INN = np.load(f)
 
@@ -109,7 +109,7 @@ with open(INfilename, 'r') as f:
 IAfilename = IA_folder + 'IA_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
 ']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
 
-with open(IAfilename, 'r') as f:
+with open(IAfilename, 'rb') as f:
 
     IAA = np.load(f)
 
@@ -139,7 +139,7 @@ IGfunction = np.imag( 1./(q2star_i**(li/2.)) * 1./(q2star_f**(lf/2.)) * (Sum - I
 binaryfilename =  G_folder + 'Bin_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
 ']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npz')
 
-with open(binaryfilename, 'w') as f:
+with open(binaryfilename, 'wb') as f:
     np.savez_compressed(f,Eistar=Eistar, Efstar=Efstar,
         qstli= q2star_i**(li/2.), qstlf= q2star_f**(lf/2.),
         Sum = Sum, IA = IAA, IN = INN,

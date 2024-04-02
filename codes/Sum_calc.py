@@ -88,7 +88,7 @@ lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
-with open(energ_file, 'r') as f:
+with open(energ_file, 'rb') as f:
 
     eners = np.load(f)
 
@@ -245,7 +245,7 @@ def Neq_sum(P_i, P_f, alpha, index):
     # Initial frame variables
     Ei = P_i[0]
 
-    Pivec = np.sqrt(sum([P_i[ii]**2 for ii in xrange(1,4)]))
+    Pivec = np.sqrt(sum([P_i[ii]**2 for ii in range(1,4)]))
 
     Eicm = np.sqrt(Ei**2 - Pivec**2)
 
@@ -259,7 +259,7 @@ def Neq_sum(P_i, P_f, alpha, index):
 
     Ef = P_f[0]
 
-    Pfvec = np.sqrt(sum([P_f[ii]**2 for ii in xrange(1,4)]))
+    Pfvec = np.sqrt(sum([P_f[ii]**2 for ii in range(1,4)]))
 
     Lambdaf = boost(P_f)
 
@@ -327,7 +327,7 @@ def Neq_sum(P_i, P_f, alpha, index):
 
 
 #CALCULATE STUFF
-print 'Sum alpha ',alpha
+print('Sum alpha ',alpha)
 ener_shape = np.shape(Eistar)
 Summ = np.ones(ener_shape) * np.complex(0.,0.)
 
@@ -339,7 +339,7 @@ if len(ener_shape) > 1: # for mesh inputs
             PP_f = np.concatenate(([enfin], lab_moment_f))
            
             Summ[mm,nn] = Neq_sum(PP_i, PP_f, alpha, indices)
-            print 'Sum: ', Eistar[mm,nn], Efstar[mm,nn], '---------', Summ[mm,nn]
+            print('Sum: ', Eistar[mm,nn], Efstar[mm,nn], '---------', Summ[mm,nn])
 else:
     for mm, enin in enumerate(Ei):
         enfin = Ef[mm]
@@ -347,7 +347,7 @@ else:
         PP_f = np.concatenate(([enfin], lab_moment_f))
 
         Summ[mm] = Neq_sum(PP_i, PP_f, alpha, indices)
-        print 'Sum: ', Eistar[mm], Efstar[mm], '---------', Summ[mm]
+        print('Sum: ', Eistar[mm], Efstar[mm], '---------', Summ[mm])
 
 
 
@@ -360,7 +360,7 @@ if not os.path.exists(sum_folder):
 
 msgg = np.meshgrid(Eistar, Efstar)
 
-with open(filename, 'w') as f:
+with open(filename, 'wb') as f:
 
     np.save(f,Summ)
 

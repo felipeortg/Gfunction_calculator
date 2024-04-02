@@ -62,7 +62,7 @@ if cval['shape'] == 'mesh':
 
     msgg = np.meshgrid(Eistar, Efstar)
 
-    with open(ener_file, 'w') as f:
+    with open(ener_file, 'wb') as f:
 
         np.save(f,np.array([msgg[0],msgg[1]]))
 
@@ -79,7 +79,7 @@ elif cval['shape'] == 'line':
     Efstar = Efstar(Eistar, pp)
     
     
-    with open(ener_file, 'w') as f:
+    with open(ener_file, 'wb') as f:
 
         np.save(f,np.array([Eistar,Efstar]))
 
@@ -96,12 +96,12 @@ elif cval['shape'] == 'lineEf':
     Eistar = Eistar(Efstar, pp)
     
     
-    with open(ener_file, 'w') as f:
+    with open(ener_file, 'wb') as f:
 
         np.save(f,np.array([Eistar,Efstar]))
 
 else:
-    print "Nothing was done"
+    print("Nothing was done")
 
 
 

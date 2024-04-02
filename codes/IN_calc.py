@@ -107,7 +107,7 @@ lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
-with open(energ_file, 'r') as f:
+with open(energ_file, 'rb') as f:
 
     eners = np.load(f)
 
@@ -187,7 +187,7 @@ def discont_linspace(interval, remov_points, ls_lenght, dist = 2):
     joint_flag = np.zeros(len(remov_points))
     
     # Check for jointed points
-    for nn in xrange(len(remov_points)-1):
+    for nn in range(len(remov_points)-1):
         # Remember of the reverse sort
         if remov_points[nn] - remov_points[nn + 1] < 2 * dist:
             joint_flag[nn] = 1 
@@ -238,12 +238,12 @@ def discont_linspace(interval, remov_points, ls_lenght, dist = 2):
 
     # Finally create the linspaces
     
-    num_linspaces = len(interval)/2
+    num_linspaces = len(interval) // 2
     
     
     linspace = np.array([])
     
-    for inters in xrange(num_linspaces):
+    for inters in range(num_linspaces):
         
         prop = float(interval[2*inters + 1] - interval[2*inters])/(interval[-1] - interval[0])
         
@@ -499,7 +499,7 @@ def Integrand_IN_a(k_dum, k_dum_th, P_i, P_f, alpha, index, region):
 
     # Evaluate each term in the sum
     # ccs is defined in the "preamble"
-    for nn in xrange(len(ccs)):# UV convergence parts
+    for nn in range(len(ccs)):# UV convergence parts
         
         # Use Lambda (UV) or the mass
         if nn > 0:
@@ -708,9 +708,9 @@ def Ang_Integrand_IN_a(k_dum_th, P_i, P_f, alpha, index):
     try:
         popt, pcov = optimize.curve_fit(fit_func, kk, gg)
     except:
-        print 'ERROR HERE', k_dum_th, [P_i[0],P_i[3]], [P_f[0],P_f[3]]
-        print '##########'
-        print '##########'
+        print('ERROR HERE', k_dum_th, [P_i[0],P_i[3]], [P_f[0],P_f[3]])
+        print('##########')
+        print('##########')
         popt = [0.,2.]
 
     # Analytical value of the tail
@@ -774,7 +774,7 @@ def Integrand_IN(k_dum, k_dum_th, k_dum_phi, P_i, P_f, alpha, index, region):
     # Initial frame variables
     Ei = P_i[0]
 
-    Pivec = np.sqrt(sum([P_i[ii]**2 for ii in xrange(1,4)]))
+    Pivec = np.sqrt(sum([P_i[ii]**2 for ii in range(1,4)]))
 
     Eicm = np.sqrt(Ei**2 - Pivec**2)
 
@@ -788,7 +788,7 @@ def Integrand_IN(k_dum, k_dum_th, k_dum_phi, P_i, P_f, alpha, index, region):
 
     Ef = P_f[0]
 
-    Pfvec = np.sqrt(sum([P_f[ii]**2 for ii in xrange(1,4)]))
+    Pfvec = np.sqrt(sum([P_f[ii]**2 for ii in range(1,4)]))
 
     Lambdaf = boost(P_f)
 
@@ -821,7 +821,7 @@ def Integrand_IN(k_dum, k_dum_th, k_dum_phi, P_i, P_f, alpha, index, region):
 
     # Evaluate each term in the sum
     # ccs is defined in the "preamble"
-    for nn in xrange(len(ccs)):# UV convergence parts
+    for nn in range(len(ccs)):# UV convergence parts
         
         # Use Lambda (UV) or the mass
         if nn > 0:
@@ -1095,7 +1095,7 @@ def make_int(P_i, P_f, alpha, index, method):
             val_temp_old = integrate.fixed_quad(Ang_Integrand_IN_nonphi, 0, np.pi,
                 args = (P_i, P_f, alpha, index), n = fix_ord)[0]
             
-            print val_temp_old
+            print(val_temp_old)
 
             fix_ord += 1
             while error > tolerance:
@@ -1107,15 +1107,15 @@ def make_int(P_i, P_f, alpha, index, method):
                 
                 val_temp_old = val_temp_new
                 
-                print val_temp_old
+                print(val_temp_old)
                 
                 fix_ord += 1
                 
                 if fix_ord > 10:
-                    print 'order bigger 10, E:', error
+                    print('order bigger 10, E:', error)
                     
                     if fix_ord > 15:
-                        print 'order 15, E:', error
+                        print('order 15, E:', error)
                         break
                         
 
@@ -1129,7 +1129,7 @@ def make_int(P_i, P_f, alpha, index, method):
     return integral
 
 #CALCULATE STUFF
-print 'IN alpha ',alpha
+print('IN alpha ',alpha)
 ener_shape = np.shape(Eistar)
 I_Nn = np.ones(ener_shape) * np.complex(0.,0.)
 
@@ -1143,7 +1143,7 @@ if len(ener_shape) > 1: # for mesh inputs
             PP_f = np.concatenate(([enfin], lab_moment_f))
             
             I_Nn[mm,nn] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
-            print 'INcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_Nn[mm,nn]
+            print('INcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_Nn[mm,nn])
 else:
     for mm, enin in enumerate(Ei):
         enfin = Ef[mm]
@@ -1151,7 +1151,7 @@ else:
         PP_f = np.concatenate(([enfin], lab_moment_f))
         
         I_Nn[mm] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
-        print 'INcalc: ', Eistar[mm], Efstar[mm], '---------', I_Nn[mm]
+        print('INcalc: ', Eistar[mm], Efstar[mm], '---------', I_Nn[mm])
 
 
 if axial:
@@ -1167,7 +1167,7 @@ if not os.path.exists(IN_folder):
 
 msgg = np.meshgrid(Eistar, Efstar)
 
-with open(filename, 'w') as f:
+with open(filename, 'wb') as f:
 
     np.save(f,I_Nn)
 

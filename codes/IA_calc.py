@@ -99,7 +99,7 @@ lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 
 # Energies from file
-with open(energ_file, 'r') as f:
+with open(energ_file, 'rb') as f:
 
     eners = np.load(f)
 
@@ -277,7 +277,7 @@ def F1_tt(x, Lams, kins):
         ffcoef = 1. / (si * (4 * np.pi)**2 * (yp - ym))
 
     except RuntimeWarning as e:
-        print e
+        print(e)
         ffcoef = 0
 
     
@@ -581,7 +581,7 @@ def make_int(P_i, P_f, index):
 
     integral = 0
 
-    for nn in xrange(len(ccs)):# UV convergence parts
+    for nn in range(len(ccs)):# UV convergence parts
         
         # Use Lambda (UV) or the mass
         if nn > 0:
@@ -662,7 +662,7 @@ if len(ener_shape) > 1: # for mesh inputs
             PP_f = np.concatenate(([enfin], lab_moment_f))
             
             I_An[mm,nn] = make_int(PP_i, PP_f, indices)
-            print 'IAcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_An[mm,nn]
+            print('IAcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_An[mm,nn])
 else:
     for mm, enin in enumerate(Ei):
         enfin = Ef[mm]
@@ -670,7 +670,7 @@ else:
         PP_f = np.concatenate(([enfin], lab_moment_f))
 
         I_An[mm] = make_int(PP_i, PP_f, indices)
-        print 'IAcalc: ', Eistar[mm], Efstar[mm], '---------', I_An[mm]
+        print('IAcalc: ', Eistar[mm], Efstar[mm], '---------', I_An[mm])
 
 
 #Save the values
@@ -682,7 +682,7 @@ if not os.path.exists(IA_folder):
 
 msgg = np.meshgrid(Eistar, Efstar)
 
-with open(filename, 'w') as f:
+with open(filename, 'wb') as f:
 
     np.save(f, I_An)
 
