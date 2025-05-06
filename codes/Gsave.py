@@ -121,11 +121,11 @@ with open(IAfilename, 'rb') as f:
 
 # Initial frame variables
 
-q2star_i = 0.25 * (Eistar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Eistar**2) * np.complex(1.,0)
+q2star_i = 0.25 * (Eistar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Eistar**2) * complex(1.,0)
 
 # Final frame variables
 
-q2star_f = 0.25 * (Efstar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Efstar**2) * np.complex(1.,0)
+q2star_f = 0.25 * (Efstar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Efstar**2) * complex(1.,0)
 
 
 # Calculate the G Function!!

@@ -113,7 +113,7 @@ Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
 # Define useful functions
 def y_noie(x, Lam1, Lam2, pm, q2, si, sf):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     if pm == 'p':
         pm = 1
@@ -264,7 +264,7 @@ def antiderlog(ymin, ymax, pole, pm):
 
 def F1_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -285,7 +285,7 @@ def F1_tt(x, Lams, kins):
 
 def F2_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -303,7 +303,7 @@ def F2_tt(x, Lams, kins):
 
 def F3_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -324,7 +324,7 @@ def F3_tt(x, Lams, kins):
 
 def F4_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -347,7 +347,7 @@ def F4_tt(x, Lams, kins):
 
 def F5_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -366,7 +366,7 @@ def F5_tt(x, Lams, kins):
 
 def F6_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -652,7 +652,7 @@ def make_int(P_i, P_f, index):
 
 #CALCULATE STUFF
 ener_shape = np.shape(Eistar)
-I_An = np.ones(ener_shape) * np.complex(0.,0.)
+I_An = np.ones(ener_shape) * complex(0.,0.)
 
 if len(ener_shape) > 1: # for mesh inputs
     for mm, enirow in enumerate(Ei):

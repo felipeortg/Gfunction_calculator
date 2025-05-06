@@ -1131,7 +1131,7 @@ def make_int(P_i, P_f, alpha, index, method):
 #CALCULATE STUFF
 print('IN alpha ',alpha)
 ener_shape = np.shape(Eistar)
-I_Nn = np.ones(ener_shape) * np.complex(0.,0.)
+I_Nn = np.ones(ener_shape) * complex(0.,0.)
 
 ang_integral_method = 'fix_quad'
 

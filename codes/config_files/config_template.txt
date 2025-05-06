@@ -16,28 +16,29 @@ shift 0 # 1 for true or 0 to false)
 # intercpt 0
 
 evals 1
-folder ../results/
+folder ../felipe_results/
 
 # Kinematics
-Eimin 2.05
+Eimin thisisEimin
 Eimax 3.8
 
-Efmin 1.825
+Efmin thisisEfmin
 Efmax 3.825
 
-Pi 0 0 0
-Pf 0 0 1
+Pi thisisPi
+Pf thisisPf
 
 # Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
-indices n 00 00
+indices 0 00 00
 
 # Scale and masses
-L_inv_mass 6.0
-m1 1.0
-m2 1.0
+L_inv_mass 5.7082
+m1 0.06906
+m2 0.06906
 
 # Cut-offs
 cube_num 36
 alpha 0.01234567901 # (1/3)^4
-ccs 1 -1 1 # subtraction coeffs int, last is denominator
-LAMB 3 # PV masses
+ccs 27 -35 8 27 # subtraction coeffs int, last is denominator
+LAMB 3 6 # PV masses
+

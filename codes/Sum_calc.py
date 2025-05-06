@@ -110,7 +110,7 @@ trip_folder = './'
 # -----------------
 # Get the array of n triplets
 filename = trip_folder + 'triplets/n_list_r<' + str(cube_num) + '.txt'
-f = open(filename, 'r')
+f = open(filename, 'rb')
 n_list = pickle.load(f)
 n_arr = np.array(n_list)
 
@@ -329,7 +329,7 @@ def Neq_sum(P_i, P_f, alpha, index):
 #CALCULATE STUFF
 print('Sum alpha ',alpha)
 ener_shape = np.shape(Eistar)
-Summ = np.ones(ener_shape) * np.complex(0.,0.)
+Summ = np.ones(ener_shape) * complex(0.,0.)
 
 if len(ener_shape) > 1: # for mesh inputs
     for mm, enirow in enumerate(Ei):

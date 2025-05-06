@@ -102,7 +102,3 @@ elif cval['shape'] == 'lineEf':
 
 else:
     print("Nothing was done")
-
-
-
-
