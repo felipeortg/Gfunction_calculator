@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 configfile=$1
 energyfile="Etemp.npy"
 
