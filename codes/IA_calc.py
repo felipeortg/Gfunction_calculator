@@ -113,7 +113,7 @@ Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
 # Define useful functions
 def y_noie(x, Lam1, Lam2, pm, q2, si, sf):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     if pm == 'p':
         pm = 1
@@ -264,7 +264,7 @@ def antiderlog(ymin, ymax, pole, pm):
 
 def F1_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -285,7 +285,7 @@ def F1_tt(x, Lams, kins):
 
 def F2_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -303,7 +303,7 @@ def F2_tt(x, Lams, kins):
 
 def F3_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -324,7 +324,7 @@ def F3_tt(x, Lams, kins):
 
 def F4_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -347,7 +347,7 @@ def F4_tt(x, Lams, kins):
 
 def F5_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -366,7 +366,7 @@ def F5_tt(x, Lams, kins):
 
 def F6_tt(x, Lams, kins):
     
-    x = np.complex(x, 0)
+    x = complex(x, 0)
     
     q2 = kins[0]
     si = kins[1]
@@ -410,6 +410,52 @@ def I00_tt(ls, ks):
     ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
     
     return ff + I * ffi
+
+def I11_tt(ls, ks):
+      
+    q2 = ks[0]
+    si = ks[1]
+    sf = ks[2]
+    
+    m1 = ls[0]
+    m2 = ls[1]
+    
+    def realF(x,ls,ks):
+        return x * np.real(F1_tt(x,ls,ks))
+
+    def imagF(x,ls,ks):
+        return x * np.imag(F1_tt(x,ls,ks))
+    
+    avoid = avoid_points(m1, m2, si, sf, q2)
+    
+    
+    ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
+    ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
+    
+    return ff + I * ffi
+
+def I12_tt(ls, ks):
+      
+    q2 = ks[0]
+    si = ks[1]
+    sf = ks[2]
+    
+    m1 = ls[0]
+    m2 = ls[1]
+    
+    def realF(x,ls,ks):
+        return np.real(F2_tt(x,ls,ks))
+
+    def imagF(x,ls,ks):
+        return np.imag(F2_tt(x,ls,ks))
+    
+    avoid = avoid_points(m1, m2, si, sf, q2)
+            
+    ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
+    ffi = integrate.quad(imagF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
+    
+    return ff + I * ffi
+
 
 def I31_tt(ls, ks):
       
@@ -599,12 +645,25 @@ def make_int(P_i, P_f, index):
             lss = [m1,m2]
 
 
-        if indices == [[],[0,0],[0,0]]:
+        if index == [[],[0,0],[0,0]]:
 
             integral += ccs[nn] * I00_tt(lss, kss)
 
+        # case IA_nu;00;00
+        if index[1:] == [[0,0],[0,0]]:
+            if len(index[0]) != 1:
+                raise ValueError('Implementation only for scalar or vector current') 
 
-        elif indices == [[0], [1,0], [1,0]]:
+            Inu = P_f[index[0]] * I11_tt(lss, kss) + P_i[index[0]] * I12_tt(lss, kss)
+
+            # lower the indices or the spatial part
+            if index[0] != 0:
+                Inu *= -1 
+
+            integral += ccs[nn] * Inu
+
+
+        elif index == [[0], [1,0], [1,0]]:
 
             I000 = Ef**3 * I31_tt(lss, kss) + Ei**3 * I32_tt(lss, kss) + (
                     3 * Ef**2 * Ei * I33_tt(lss, kss) 
@@ -652,7 +711,7 @@ def make_int(P_i, P_f, index):
 
 #CALCULATE STUFF
 ener_shape = np.shape(Eistar)
-I_An = np.ones(ener_shape) * np.complex(0.,0.)
+I_An = np.ones(ener_shape) * complex(0.,0.)
 
 if len(ener_shape) > 1: # for mesh inputs
     for mm, enirow in enumerate(Ei):

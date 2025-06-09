@@ -6,3 +6,7 @@ codes/Ener_vals/offset.npy
 
 codes/Ener_vals/paper.npy
 codes/config_files/config__00_00_000_001paper.txt
+
+
+conda_env/
+source_env.sh

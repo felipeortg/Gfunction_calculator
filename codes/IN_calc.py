@@ -1131,7 +1131,7 @@ def make_int(P_i, P_f, alpha, index, method):
 #CALCULATE STUFF
 print('IN alpha ',alpha)
 ener_shape = np.shape(Eistar)
-I_Nn = np.ones(ener_shape) * np.complex(0.,0.)
+I_Nn = np.ones(ener_shape) * complex(0.,0.)
 
 ang_integral_method = 'fix_quad'
 
@@ -1155,7 +1155,7 @@ else:
 
 
 if axial:
-    if len(indices[0])>0 and indices[0][0] == 1: #change from z=3 to z=1 since only two indices
+    if len(indices[0])>0 and indices[0][0] == 1: #change back from z=1 to z=3 since only two indices
         indices[0][0] = 3
 
 #Save the values

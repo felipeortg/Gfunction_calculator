@@ -121,11 +121,11 @@ with open(IAfilename, 'rb') as f:
 
 # Initial frame variables
 
-q2star_i = 0.25 * (Eistar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Eistar**2) * np.complex(1.,0)
+q2star_i = 0.25 * (Eistar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Eistar**2) * complex(1.,0)
 
 # Final frame variables
 
-q2star_f = 0.25 * (Efstar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Efstar**2) * np.complex(1.,0)
+q2star_f = 0.25 * (Efstar**2 - 2*(m1**2 + m2**2) + (m1**2 - m2**2)**2/Efstar**2) * complex(1.,0)
 
 
 # Calculate the G Function!!
@@ -152,19 +152,23 @@ readblefilename =  G_folder + 'Read_sig_[' + str(indices[0]) +';' +str(indices[1
 
 
 with open(readblefilename, 'w') as csvfile:
-    writer = csv.writer(csvfile, delimiter=',')
+    writer = csv.writer(csvfile, delimiter=' ')
     flatq2i = np.ndarray.flatten(q2star_i**(li/2.))
     flatq2f =  np.ndarray.flatten(q2star_f**(lf/2.))
     flatEf = np.ndarray.flatten(Efstar)
-    flatS = np.ndarray.flatten(Sum)
-    flatIA = np.ndarray.flatten(IAA)
-    flatIN = np.ndarray.flatten(INN)
+    flatReS = np.ndarray.flatten(np.real(Sum))
+    flatImS = np.ndarray.flatten(np.imag(Sum))
+    flatReIA = np.ndarray.flatten(np.real(IAA))
+    flatImIA = np.ndarray.flatten(np.imag(IAA))
+    flatReIN = np.ndarray.flatten(np.real(INN))
+    flatImIN = np.ndarray.flatten(np.imag(INN))
     flatRG = np.ndarray.flatten(RGfunction)
     flatIG = np.ndarray.flatten(IGfunction)
-    writer.writerow(['Eist', 'q2i^(l/2)', 'Efst', 'q2f^(l/2)', 'Sum', 'IA', 'IN', 'ReG', 'ImG'])
+    writer.writerow(['#Eist', 'q2i^(l/2)', 'Efst', 'q2f^(l/2)', 'ReG', 'ImG', 'ReSum', 'ImSum', 'ReIA', 'ImIA', 'ReIN', 'ImIN'])
     for n, Ei in enumerate(np.ndarray.flatten(Eistar)):
         writer.writerow([Ei, flatq2i[n], flatEf[n], flatq2f[n], 
-            flatS[n], flatIA[n], flatIN[n], flatRG[n], flatIG[n]])
+            flatRG[n], flatIG[n],
+            flatReS[n], flatImS[n], flatReIA[n], flatImIA[n], flatReIN[n], flatImIN[n]])
 
 
 
