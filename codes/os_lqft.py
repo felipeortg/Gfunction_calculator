@@ -112,3 +112,30 @@ def abspath(path):
     abs_file_path = os.path.abspath(file_path)
 
     return abs_file_path + dataset_name
+
+def read_configs(path):
+    
+    cval = dict()
+
+    with open(path, 'r') as f:
+        for line in f.read().splitlines():
+
+            if len(line) == 0: # skip empty lines
+                continue
+
+            if line[0] == '#': # skip comments
+                continue
+
+            spaceat = line.find(' ')
+            key = line[0:spaceat]
+            commentat = line.find('#')
+
+            if commentat== -1: # no comment
+                value = line[spaceat+1:]
+
+            else:   #when there is a comment
+                value = line[spaceat+1:commentat-1]
+
+            cval[key] = value
+
+    return cval

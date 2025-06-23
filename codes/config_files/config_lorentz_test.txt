@@ -1,0 +1,44 @@
+# Parameters to calculate the G function
+# Comments with #
+# Format :
+# variable_name *space* variable_value *space* #comment
+# ONE SPACE before and after (in case of comment) variable_value is needed
+
+# Calculation
+# You can either do a mesh or a line
+shape line # line
+
+# for the mesh you can shift the Ef to avoid errors in IN
+shift 0 # 1 for true or 0 to false)
+
+# for the line you can change the slope and intercept
+slop 1
+intercpt 0
+
+evals 10
+folder ../lorentz_results/
+
+# Kinematics
+Eimin 2.5
+Eimax 3.8
+
+Efmin 2.5
+Efmax 3.825
+
+Pi 100
+Pf 110
+
+# Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
+indices 0 00 00
+
+# Scale and masses
+L_inv_mass 5.7082
+m1 0.06906
+m2 0.06906
+
+# Cut-offs
+cube_num 36
+alpha 0.01234567901 # (1/3)^4
+ccs 27 -35 8 27 # subtraction coeffs int, last is denominator
+LAMB 3 6 # PV masses
+

@@ -15,14 +15,21 @@ from scipy import integrate
 from scipy import optimize
 import matplotlib.pyplot as plt
 
+# import sys
+# sys.path.append("codes/")
+
+import lorentz_transformations as lt
+
 # -----------------
 # Config file:
 # -----------------
 config_file = str(sys.argv[1])
+# config_file = "codes/config_files/config_lorentz_test.txt"
 
 # -----------------
 # Energies file:
 energ_file = str(sys.argv[2])
+# energ_file = "Etemp.npy"
 
 cval = dict()
 
@@ -46,7 +53,6 @@ with open(config_file, 'r') as f:
             value = line[spaceat+1:commentat-1]
 
         cval[key] = value
-
 
 results_folder = cval['folder']
 
@@ -73,7 +79,6 @@ m2t = m2
 # This is dimensionful, the dimensionless quantity should be less than 1
 # UV regulator
 alpha = float(cval['alpha']) # exponential suppression
-
 
 # G-indexing
 indices = []
