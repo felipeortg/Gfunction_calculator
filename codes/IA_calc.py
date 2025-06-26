@@ -644,20 +644,20 @@ def make_int(P_i, P_f, index):
 
             lss = [m1,m2]
 
-
-        if index == [[],[0,0],[0,0]]:
-
-            integral += ccs[nn] * I00_tt(lss, kss)
-
-        # case IA_nu;00;00
         if index[1:] == [[0,0],[0,0]]:
-            if len(index[0]) != 1:
+            if len(index[0]) > 1:
                 raise ValueError('Implementation only for scalar or vector current') 
 
-            Inu = P_f[index[0]] * I11_tt(lss, kss) + P_i[index[0]] * I12_tt(lss, kss)
+            if index[0] == []:
+
+                integral += ccs[nn] * I00_tt(lss, kss)
+                continue
+
+            Inu = P_f[index[0][0]] * I11_tt(lss, kss) + P_i[index[0][0]] * I12_tt(lss, kss)
 
             # lower the indices or the spatial part
-            if index[0] != 0:
+            if index[0][0] != 0:
+                print("neg")
                 Inu *= -1 
 
             integral += ccs[nn] * Inu

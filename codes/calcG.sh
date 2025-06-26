@@ -5,7 +5,8 @@ energyfile="Etemp.npy"
 
 python En_setup.py $configfile $energyfile
 
-python IN_calc.py $configfile $energyfile &
+#python IN_calc.py $configfile $energyfile &
+python IN_calc_mu_00_00.py  $configfile $energyfile & 
 
 python IA_calc.py $configfile $energyfile &
 
