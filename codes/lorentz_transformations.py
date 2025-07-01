@@ -66,7 +66,7 @@ def rotation(P: np.ndarray) -> np.ndarray:
 
     Ry = np.array([[1, 0, 0, 0],
                    [0, np.cos(theta), 0, -np.sin(theta)],
-                   [0, 0, 0, 0],
+                   [0, 0, 1, 0],
                    [0, np.sin(theta), 0, np.cos(theta)]])
 
     return Ry @ Rz
@@ -88,10 +88,23 @@ def lorentz_transformation_2(Pi: np.ndarray, Pf: np.ndarray) -> np.ndarray:
             (np.ndarray): A 4x4 Lorentz transformation matrix
     """
     L = lorentz_transform(Pi)
+    print(L)
+    print(rotation(L @ Pf))
     return rotation(L @ Pf) @ L
 
-# Pi = np.array([3, 0, 0, 1])
-# Pf = np.array([5, 1, 1, 1])
-# L = lorentz_transformation_2(Pi, Pf)
-# print(L @ Pf)
-# print(L @ Pi, np.sqrt(Pi[0]**2 - np.linalg.norm(Pi[1:])**2))
+Ei = 1.9999463385
+Ef = 1.825
+Pi = np.array([0,0,1]) * 2*np.pi / 500
+Pf = np.array([1,1,0]) * 2*np.pi / 500
+
+Ei = np.sqrt(Ei**2 + Pi @ Pi)
+Ef = np.sqrt(Ef**2 + Pf @ Pf)
+
+Pi = np.array([Ei, *Pi])
+Pf = np.array([Ef, *Pf])
+L = lorentz_transformation_2(Pi, Pf)
+print(L)
+print(np.linalg.inv(L))
+print(L @ Pf)
+print(L @ Pi)
+print(lorentz_transform(Pi) @ Pf)
