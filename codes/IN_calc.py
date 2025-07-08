@@ -15,21 +15,21 @@ from scipy import integrate
 from scipy import optimize
 import matplotlib.pyplot as plt
 
-# import sys
-# sys.path.append("codes/")
+import sys
+sys.path.append("codes/")
 
 import lorentz_transformations as lt
 
 # -----------------
 # Config file:
 # -----------------
-config_file = str(sys.argv[1])
-# config_file = "codes/config_files/config_lorentz_test.txt"
+# config_file = str(sys.argv[1])
+config_file = "codes/config_files/config_lorentz_test.txt"
 
 # -----------------
 # Energies file:
-energ_file = str(sys.argv[2])
-# energ_file = "Etemp.npy"
+# energ_file = str(sys.argv[2])
+energ_file = "Etemp.npy"
 
 cval = dict()
 
@@ -75,6 +75,7 @@ m2 = float(cval['m2'])
 m1t = m1
 m2t = m2
 
+foat(cval["L_inv_mass"]) / m1t
 
 # This is dimensionful, the dimensionless quantity should be less than 1
 # UV regulator
@@ -112,7 +113,8 @@ lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
 # Energies from file
-with open(energ_file, 'rb') as f:
+with open("codes/" + energ_file, 'rb') as f:
+# with open(energ_file, 'rb') as f:
 
     eners = np.load(f)
 
@@ -124,12 +126,12 @@ Efstar = eners[1]
 Ei = np.sqrt(Eistar**2 + np.dot(lab_moment_i, lab_moment_i))
 Ef = np.sqrt(Efstar**2 + np.dot(lab_moment_f, lab_moment_f))
 
-# This was shown to be always the case
 axial = 1
-if axial:
-    if len(indices[0])>0 and indices[0][0] == 3: #change from z=3 to z=1 since only two indices
-        indices[0][0] = 1
-
+# # This was shown to be always the case
+# axial = 1
+# if axial:
+#     if len(indices[0])>0 and indices[0][0] == 3: #change from z=3 to z=1 since only two indices
+#         indices[0][0] = 1
 
 # -----------------
 # Useful functions
@@ -1140,28 +1142,56 @@ I_Nn = np.ones(ener_shape) * complex(0.,0.)
 
 ang_integral_method = 'fix_quad'
 
-if len(ener_shape) > 1: # for mesh inputs
-    for mm, enirow in enumerate(Ei):
-        for nn, enin in enumerate(enirow):
-            enfin = Ef[mm,nn]
-            PP_i = np.concatenate(([enin], lab_moment_i))
-            PP_f = np.concatenate(([enfin], lab_moment_f))
-            
-            I_Nn[mm,nn] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
-            print('INcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_Nn[mm,nn])
-else:
-    for mm, enin in enumerate(Ei):
-        enfin = Ef[mm]
-        PP_i = np.concatenate(([enin], lab_moment_i))
-        PP_f = np.concatenate(([enfin], lab_moment_f))
-        
-        I_Nn[mm] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
-        print('INcalc: ', Eistar[mm], Efstar[mm], '---------', I_Nn[mm])
+PP_i = np.concatenate((Ei, lab_moment_i))
+PP_f = np.concatenate((Ef, lab_moment_f))
 
+L = lt.lorentz_transformation_2(PP_i, PP_f)
+PP_i_axial = L @ PP_i
+PP_f_axial = L @ PP_f
+PP_i_axial[PP_i_axial < 1e-10] = 0
+PP_f_axial[PP_f_axial < 1e-10] = 0
 
-if axial:
-    if len(indices[0])>0 and indices[0][0] == 1: #change from z=3 to z=1 since only two indices
-        indices[0][0] = 3
+print(PP_i_axial, PP_f_axial)
+print(indices)
+
+indices_0 = indices.copy()
+indices_0[0][0] = 0
+I_Nn_0 = make_int(PP_i_axial, PP_f_axial, alpha, indices, ang_integral_method)
+indices_3 = indices.copy()
+indices_3[0][0] = 1
+I_Nn_3 = make_int(PP_i_axial, PP_f_axial, alpha, indices, ang_integral_method)
+
+I_Nn_axial = np.array([I_Nn_0, 0, 0, I_Nn_3])
+I_Nn = np.linalg.inv(L) @ I_Nn_axial
+print(lab_moment_i_int)
+print(lab_moment_f_int)
+print(Ei)
+print(Ef)
+print(m1t, m2t)
+print(I_Nn)
+
+# if len(ener_shape) > 1: # for mesh inputs
+#     for mm, enirow in enumerate(Ei):
+#         for nn, enin in enumerate(enirow):
+#             enfin = Ef[mm,nn]
+#             PP_i = np.concatenate(([enin], lab_moment_i))
+#             PP_f = np.concatenate(([enfin], lab_moment_f))
+#
+#             I_Nn[mm,nn] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
+#             print('INcalc: ', Eistar[mm,nn], Efstar[mm,nn], '---------', I_Nn[mm,nn])
+# else:
+#     for mm, enin in enumerate(Ei):
+#         enfin = Ef[mm]
+#         PP_i = np.concatenate(([enin], lab_moment_i))
+#         PP_f = np.concatenate(([enfin], lab_moment_f))
+#
+#         I_Nn[mm] = make_int(PP_i, PP_f, alpha, indices, ang_integral_method)
+#         print('INcalc: ', Eistar[mm], Efstar[mm], '---------', I_Nn[mm])
+#
+#
+# if axial:
+#     if len(indices[0])>0 and indices[0][0] == 1: #change from z=3 to z=1 since only two indices
+#         indices[0][0] = 3
 
 #Save the values
 filename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(

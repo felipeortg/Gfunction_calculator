@@ -16,18 +16,18 @@ shift 0 # 1 for true or 0 to false)
 # slop 1
 # intercpt 0
 
-evals 2
+evals 1
 folder ../results/test/
 
 # Kinematics
-Eimin 1.8
+Eimin 2.5
 Eimax 3.8
 
 Efmin 1.825
 Efmax 3.825
 
-Pi 0 0 1
-Pf 0 0 1
+Pi 0 1 1
+Pf 2 0 1
 
 # Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
 indices 0 10 10

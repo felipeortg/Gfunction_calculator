@@ -15,7 +15,7 @@ shift 0 # 1 for true or 0 to false)
 slop 1
 intercpt 0
 
-evals 10
+evals 1
 folder ../lorentz_results/
 
 # Kinematics
@@ -25,8 +25,8 @@ Eimax 3.8
 Efmin 2.5
 Efmax 3.825
 
-Pi 100
-Pf 110
+Pi 1 0 0
+Pf 1 1 0
 
 # Index structure (use n for no index) (\mu\nu\rho... lfmf limi)
 indices 0 00 00
