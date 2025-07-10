@@ -1,0 +1,435 @@
+\documentclass[aps,prd,onecolumn,groupedaddress]{revtex4-2}
+%\documentclass[aps,prd,preprint,superscriptaddress]{revtex4-2}
+%\documentclass[aps,prd,reprint,groupedaddress]{revtex4-2}
+
+\usepackage{amsmath} % Math packages, written here to get Sublime autocomplete
+\usepackage{amsfonts} % Math packages
+\usepackage{physics} % Physics packages
+\usepackage{slashed}%just to show the slashed covariant derivative
+\usepackage{graphicx}
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{listings}%to write code within the document in a pretty-print manner.
+\lstloadlanguages{python}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{hyperref} % For hyperlinks in the PDF
+%\usepackage{feynmp-auto} %feynman diagrams in case you want to draw them by hand
+
+%----------------------------------------------------------------------------------------
+%       Felipe's Command
+%----------------------------------------------------------------------------------------
+\newcommand{\inred}[1]{\textcolor{red}{#1}}
+
+
+\begin{document}
+
+
+
+%Title of paper
+\title{Implementation of removable singularities of \texorpdfstring{$I_\mathcal{N}$}{IN}}
+
+% repeat the \author .. \affiliation  etc. as needed
+% \email, \thanks, \homepage, \altaffiliation all apply to the current
+% author. Explanatory text should go in the []'s, actual e-mail
+% address or url should go in the {}'s for \email and \homepage.
+% Please use the appropriate macro foreach each type of information
+
+% \affiliation command applies to all authors since the last
+% \affiliation command. The \affiliation command should follow the
+% other information
+% \affiliation can be followed by \email, \homepage, \thanks as well.
+\author{Felipe G. Ortega-Gama}
+\email[]{felipeortegagama@gmail.com}
+%\homepage[]{Your web page}
+%\thanks{}
+%\altaffiliation{}
+\affiliation{Department of Physics, UC Berkeley, Berkeley, California 94720, USA}
+
+%Collaboration name if desired (requires use of superscriptaddress
+%option in \documentclass). \noaffiliation is required (may also be
+%used with the \author command).
+%\collaboration can be followed by \email, \homepage, \thanks as well.
+%\collaboration{}
+%\noaffiliation
+
+\date{\today}
+
+
+
+%\maketitle must follow title, authors, abstract, and keywords
+\maketitle
+
+% body of paper here - Use proper section commands
+% References should be done using the \cite, \ref, and \label commands
+
+The numerical piece of the calculation of the finite volume triangle function $\mathcal{G}$ involves the numerical evaluation of a 3-dimensional integral, which integrand was designed to be a smooth and convergent function.
+The details given in Ref.~\cite{Baroni:2018iau}.
+However, this is achieved by the careful cancellation of singularities in different terms.
+Here we derive the limit of the integrand whenever individual terms have singularities, and a direct numerical evaluation  would be problematic.
+This would allow the code to directly evaluate the integrand near the singular points.
+
+
+\section{Definitions}
+
+
+The integral that we want to analyze was derived and described in Ref.~\cite{Baroni:2018iau},
+\begin{multline}
+\mathcal I_{\mathcal N;\nu_1 \cdots \nu_N}(\bar{\alpha}, P_f, P_i) \equiv     \int \! \frac{d^3 \textbf k}{(2\pi)^3} \, 
+\,
+ [H(\bar{\alpha}, \textbf k) - 1]
+ \,
+\sum_{j=0}^{n_j} c_j \Big [ D(\Lambda_j, \textbf k) K^{\omega}_{\nu_1 \cdots \nu_N}(\Lambda_j, \textbf k) +\mathcal K_{r; \nu_1 \cdots \nu_N}
+(\Lambda_j, \textbf k) \Big ]  
+ \\
+%
+ -  \int \! \frac{d^3 \textbf k}{(2\pi)^3}
+ \,
+     \, H(\bar{\alpha}, \textbf k)  \sum_{j=1}^{n_j}  c_j D(\Lambda_j, \textbf k) K^{\omega}_{\nu_1 \cdots \nu_N}(\Lambda_j, \textbf k)
+ \\
+%
+ -  \int \! \frac{d^3 \textbf k}{(2\pi)^3} \, 
+ \, H(\bar{\alpha}, \textbf k)   \sum_{j=0}^{n_j} c_j   \mathcal K_{r; \nu_1 \cdots \nu_N}(\Lambda_j, \textbf k)   \,.
+\label{eq:INdef}
+\end{multline}
+
+\begin{align}
+H( \bar \alpha, \textbf{k}) &\equiv e^{- \bar \alpha (k^{\star 2}_i - q^{\star 2}_i) (k^{\star 2}_f - q^{\star 2}_f)} \,,\\
+D(m,\textbf{k})& \equiv \frac{1}{2\omega_{k2}}
+\frac{1}
+  {  (P_f-k)^2 - m_1^2 + i \epsilon  } 
+\frac{1}
+{  (P_i-k)^2 - m_1^2 + i \epsilon  }\bigg|_{k^0=\omega_{k2}}    \,,
+\label{eq:D_def}
+\\
+\omega_{ k2} &\equiv \sqrt{ \textbf k^2 + m_2^2}\,, \quad \omega_{P k1}  \equiv \sqrt{(\textbf P -\textbf k)^2 + m_1^2} \,,\\
+K^{\omega}_{\mu_1\cdots \mu_n}(m,\textbf k)  &\equiv k_{\mu_1}\cdots k_{\mu_n}  \bigg  |_{k^0=\omega_{k2}} \,,
+\\
+\label{eq:calKrsigma}
+\mathcal K_{r;\nu_1 \cdots \nu_N}(\Lambda, \textbf k) &\equiv D_{rf}(\Lambda, \textbf k) \mathcal N_{\nu_1 \cdots \nu_N}(E_f+\omega_{P_fk1}, \Lambda, \textbf k) +  D_{ri}(\Lambda, \textbf k) \mathcal N_{\nu_1 \cdots \nu_N}(E_i+\omega_{P_i k1}, \Lambda, \textbf k)  \,,
+\\
+\label{eq:Drf}
+D_{rf}(m, \textbf k) &=
+\frac{1}{2 \omega_{P_fk1}}
+\frac{1}
+  { ( E_f+\omega_{P_fk1})^2 - \omega_{k2}^2  }
+\frac{ 1} 
+{  (E_i-E_f-\omega_{P_fk1})^2 - \omega_{P_ik1}^2   } \,, \\
+\label{eq:Dri}
+D_{ri}(m, \textbf k) &=
+\frac{1}{2 \omega_{P_ik1}}
+\frac{1}
+  { ( E_i+\omega_{P_ik1})^2 - \omega_{k2}^2   } 
+\frac{ 1} 
+{  (E_f-E_i-\omega_{P_ik1})^2 - \omega_{P_fk1}^2   }  \,.
+\\
+\mathcal N_{\nu_1 \cdots \nu_N}(\Omega_k,  \Lambda, \textbf k) &\equiv   k_{\nu_1}\cdots k_{\nu_N} \Big \vert_{k^0 = \Omega_k}
+\end{align}
+
+Here we specialize in the following case
+\begin{itemize}
+    \item Number of indices is $N\leq 1$, which will be useful for a transition of an $S$-wave system via a vector current.
+    \item For these number of indices no subtractions are needed, i.e.\ $n_j=0$.
+    \item As described in appendix B6 of Ref.~\cite{Baroni:2018iau}, this function is Lorentz covariant, so that we choose to evaluate it in the initial center of mass frame, with the final momentum aligned with the $z$-axis, such that
+    \begin{equation}
+    \label{eq:CMinitial}
+        [\Lambda_{\pmb \beta_i}]^\mu{}_\nu \,P^\nu_i=(E_i^\star, \vb 0)\,,\quad [\Lambda_{\pmb \beta_i}]^\mu{}_\nu \, P_f^\nu=(E_{f,i}^\star, \mathbf P_{f,i}^\star)\,,\quad [R^{-1}_{\vu P_{f,i}}\Lambda_{\pmb \beta_i}]^\mu{}_\nu \, P_f^\nu=(E_{f,i}^\star, \abs{\mathbf P_{f,i}^\star}\vu z)\,,
+    \end{equation}
+    where we can describe the kinematics in terms of the Lorentz invariants $s_i=P_i^2$, $s_f=P_f^2$ and $\gamma = P_i\cdot P_f/\sqrt{s_is_f}$, or alternatively the squares of $P_i$, $P_f$, and $q=P_f-P_f$.
+    \item This means that none of the propagators will carry any azimuthal dependence, and the azimuthal integral can be carried out analytically, only taking care of the numerator terms.
+\end{itemize}
+
+The scalar integral simplifies to
+\begin{multline}
+\mathcal I_{\mathcal N}(\bar{\alpha}, P_f, P_i) \equiv  \int \! \frac{d(\cos \theta^\star_i) d\abs{\textbf k^\star_i}\, \textbf k^{\star2}_i}{(2\pi)^2} \, 
+\,
+ [H(\bar{\alpha}, \textbf k^\star_i) - 1]
+ \,
+\Big [ D(m, \textbf k^\star_i) + D_{rf}(m, \textbf k^\star_i) + D_{ri}(m, \textbf k^\star_i) \Big ]  
+ \\
+%
+ -  \int \! \frac{d(\cos \theta^\star_i) d\abs{\textbf k^\star_i}\, \textbf k^{\star2}_i}{(2\pi)^2} \, 
+ \, H(\bar{\alpha}, \textbf k^\star_i)   \qty( D_{rf}(m, \textbf k^\star_i) + D_{ri}(m, \textbf k^\star_i) ) \,.
+\end{multline}
+
+The vector integral will be given by
+\begin{equation}
+    \mathcal I^\mu_{\mathcal N}(\bar{\alpha}, P_f, P_i) = [(R_{\vu P_{f,i}}\Lambda_{\pmb \beta_i})^{-1}]^{\mu}{}_{\nu} \,
+    \mathcal I^\nu_{\mathcal N}(\bar{\alpha}, s_f, s_i, \gamma) 
+\end{equation}
+where the quantity on the right hand side is zero except for $\mu=0$ and $\mu=3$,
+\begin{multline}
+\mathcal I^\mu_{\mathcal N}(\bar{\alpha}, s_f, s_i, \gamma)  \equiv  \int \! \frac{d(\cos \theta^\star_i) d\abs{\textbf k^\star_i}\, \textbf k^{\star2}_i}{(2\pi)^2} \, 
+\,
+ [H(\bar{\alpha}, \textbf k^\star_i) - 1]
+ \,
+\Bigg [ D(m, \textbf k^\star_i) k_i^{\star\mu}\bigg  |_{k_0=\omega_{k2,i}^\star} 
+\\
++ D_{rf}(m, \textbf k^\star_i)  k_i^{\star\mu}\bigg  |_{k_0=\gamma\sqrt{s_f}+\omega_{P_fk1,i}^\star} +  D_{ri}(m, \textbf k^\star_i)  k_i^{\star\mu}\bigg  |_{k_0=\sqrt{s_i}+\omega_{P_i k1,i}^\star} \Bigg ]  
+ \\
+%
+ -  \int \! \frac{d(\cos \theta^\star_i) d\abs{\textbf k^\star_i}\, \textbf k^{\star2}_i}{(2\pi)^2} \, 
+ \, H(\bar{\alpha}, \textbf k^\star_i)   \qty[D_{rf}(m, \textbf k^\star_i)  k_i^{\star\mu}\bigg  |_{k_0=\gamma\sqrt{s_f}+\omega_{P_fk1,i}^\star} +  D_{ri}(m, \textbf k^\star_i)  k_i^{\star\mu}\bigg  |_{k_0=\sqrt{s_i}+\omega_{P_i k1,i}^\star}]  \,.
+\end{multline}
+
+
+In what follows we will drop the notation from $k^\star_i$ to just $k$, and similarly with all other quantities, but we advise the reader that everything is evaluated in the frame described by Eq.~\ref{eq:CMinitial}.
+As an extra simplification we will change the notation in the following sections of the magnitude of the spatial integration momentum from $\abs{\textbf k^\star_i}$ to $k$.
+
+\section{Removable singularities}
+
+As mentioned before, certain terms of the integrand will be singular within the integration, in this section will look into each of these possible removable singularities from the integrand.
+
+\subsection{Singularities at on-shell conditions \texorpdfstring{$k^{\star2}=q^{\star2}$}{k*2=q*2}}
+
+The two-pole propagator $D(m, \mathbf k)$ can be rewritten in the initial mass frame to be given by
+\begin{align}
+    D(m, \mathbf k) &= \frac{1}{2\omega_{k2}  (E_f-\omega_{k2} - \omega_{P_fk1})
+  (E_f-\omega_{k2} + \omega_{P_fk1})  (E_i-\omega_{k2} - \omega_{k1})
+  (E_i-\omega_{k2} + \omega_{k1}) }\,,\\
+    \omega_{ki} &= \sqrt{k^2+m_i^2}\,,\\
+    \omega_{P_fk1}& = \sqrt{k^2 -2 kP_{f}\cos\theta + P_f^2 +m_1^2}\,,
+\end{align}
+where $P_f=\abs{\mathbf P_f}$, and we can observe that poles will be present along the integration region whenever the integration variable takes the value of the relative momentum of the initial or final system, i.e. at $k=q_i^\star$, and at $k^\star_f=q_f^\star$.
+The relative momentum is given by
+\begin{equation}
+    q^\star(s,m_1,m_2) = \frac{1}{2\sqrt{s}}\sqrt{s^2+m_1^4+m_2^4-2(s\,m_1^2+s\,m_2^2+m_1^2m_2^2)} =\frac{1}{2\sqrt{s}}\sqrt{(s-(m_1+m_2)^2)(s-(m_1-m_2)^2)}\,.
+\end{equation}
+
+Each of these poles cancels exactly with the term $H(\bar{\alpha}, \textbf k)-1$, leaving only a finite result.
+
+
+\subsubsection{Initial energy on-shell singularity}
+To find this finite value we take the limit
+\begin{multline}
+    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) 
+    \\ =
+    \frac{-\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{4\omega_{k1}\omega_{k2}  (E_f-E_i+\omega_{k1} - \omega_{P_fk1})
+  (E_f-E_i+\omega_{k1} + \omega_{P_fk1})}\bigg  |_{k=q_i^\star} 
+  \lim_{k\to q^\star_i}
+  \frac{k^{2} - q^{\star 2}_i}{E_i-\omega_{k2} - \omega_{k1}}\,.
+\end{multline}
+where we used that $\lim_{k\to q^\star_i}\omega_{k2}=\lim_{k\to q^\star_i}E_i-\omega_{k1}$.
+We Taylor expand the denominator around the pole
+\begin{equation}
+    E_i-\omega_{k2} - \omega_{k1} = (k^2-q^{\star2}_i)\frac{-2 E_i^3}{E_i^4-(m_1^2-m_2^2)^2} + \mathcal{O}\qty((k^2-q^{\star2}_i)^2)\,,
+\end{equation}
+and we substitute into the previous equation to obtain
+\begin{equation}
+    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) = 
+    \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)[E_i^4-(m_1^2-m_2^2)^2]}{8\omega_{k1}\omega_{k2} E_i^3 (E_f-E_i+\omega_{k1} - \omega_{P_fk1})
+  (E_f-E_i+\omega_{k1} + \omega_{P_fk1})}\bigg  |_{k=q_i^\star} \,,
+\end{equation}
+or alternatively
+\begin{equation}
+    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) = 
+    \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)[E_i^4-(m_1^2-m_2^2)^2]}{2E_i^3\,2\omega_{k2}  (E_f-\omega_{k2} - \omega_{P_fk1})
+  (E_f-\omega_{k2} + \omega_{P_fk1}) 
+  (E_i-\omega_{k2} + \omega_{k1}) }\bigg  |_{k=q_i^\star} \,,
+\end{equation}
+a third option, using the fact that,
+\begin{equation}
+    E_i^4-(m_1^2-m_2^2)^2 = 4E_i^2\omega_{k1}\omega_{k2}\bigg  |_{k=q_i^\star}\,,
+\end{equation}
+it somewhat simplifies to
+\begin{equation}
+    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) = 
+    \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{2E_i (E_f-E_i+\omega_{k1} - \omega_{P_fk1})
+  (E_f-E_i+\omega_{k1} + \omega_{P_fk1})}\bigg  |_{k=q_i^\star} \,.
+\end{equation}
+
+Another option to write minimal amount of code would be
+\begin{equation}\label{eq:limitqist}
+    \lim_{k\to q^\star_i}\frac{H(\bar{\alpha}, \textbf k) - 1}{2\omega_{k2}[(E_i-\omega_{k2})^2-\omega_{k1}^2]}
+    = \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{2E_i}\,.
+\end{equation}
+
+\subsubsection{Final energy on-shell singularity}
+
+Since we evaluate the integral in the initial center of mass frame, the expression for the value of $k$ so that $k^\star_f=q^\star_f$ is a little more complicated, and similarly the evaluation of the limit.
+Nonetheless, this condition is equivalent to
+\begin{equation}
+    E_f-\omega_{k2} - \omega_{P_fk1} = 0\,.
+\end{equation}
+The precise definition of $k^\star_f$ is given by
+\begin{equation}
+    k^\star_f = \qty[\sum_{i=1}^3 \qty([\Lambda_{\beta\vu z}]^i_\mu k^\mu)^2]^{1/2}\bigg|_{k^0=\omega_{k2}}\,,
+\end{equation}
+where $\beta=(1-\gamma^{-2})^{1/2}$, the square of which is equal to
+\begin{equation}
+    k^{\star2}_f=\gamma^2k^2+\beta\gamma^2(\beta k^2\cos\theta^2-2k\,\omega_{k2}\cos\theta+\beta m_2^2)\,,
+\end{equation}
+in terms of $k^2$, $\cos\theta$, $\gamma$ and $m_2$.
+We will need the derivative with respect to $k^2$
+\begin{equation}
+    \pdv{k^{\star2}_f}{k^{2}}= \gamma^2+ \beta\gamma^2\qty(\beta \cos\theta^2 -\frac{2k^2+m^2_2}{k\,\omega_{k2}} \cos\theta)\,.
+\end{equation}
+
+To obtain the limit of interest we also need the derivative of the pole associated with the final states on shell.
+We get a simpler result if we consider the two poles of the $P_f-k$ propagator,
+\begin{equation}
+    \pdv{k^{2}}(E_f-\omega_{k2} - \omega_{P_fk1} )(E_f-\omega_{k2} + \omega_{P_fk1} ) = -\frac{E_f}{\omega_{k2}}+\frac{P_f\cos\theta}{k}\,.
+\end{equation}
+
+Combining this equations we obtain
+\begin{align}
+     \lim_{k^{\star}_f\to q^\star_f} \frac{ k^{\star2}_f- q^{\star2}_f}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}
+     &= \frac{\gamma^2+ \beta\gamma^2\qty(\beta \cos\theta^2 -\frac{2k^2+m^2_2}{k\,\omega_{k2}} \cos\theta)}{-\frac{E_f}{\omega_{k2}}+\frac{P_f\cos\theta}{k}}\,,\\
+     &= \frac{\gamma ^2 \left(-k \omega_{k2} \left(\beta ^2 \cos\theta^2+1\right)+(2 \beta  k^2 +\beta  m_2^2 )\cos\theta\right)}{E_f \,k-P_f \,\omega_{k2}\cos\theta }\,,
+\end{align}
+which further simplifies in the case $\beta=0$,
+\begin{equation}
+         \lim_{k^{\star}_f\to q^\star_f} \frac{ k^{\star2}_f- q^{\star2}_f}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}\bigg|_{\beta=0}
+     = \frac{-\omega_{k2} }{E_f}\,,
+\end{equation}
+which is what we also found for the initial state case.
+
+There is a small caveat in that if $\beta>0$ and $q_f^\star=0$, both of the derivatives that we calculated vanish for $\cos\theta=1$, precisely at $k^{\star2}_f=0$.
+For that case we need the second order derivatives
+\begin{align}
+    \pdv[2]{k^{\star2}_f}{(k^{2})}&= \beta  \gamma ^2 \left(\frac{\omega_{k2} }{2 k^{3}}-\frac{1}{k\, \omega_{k2}}+\frac{k
+   }{2 \omega_{k2}^{3}}\right)\,,\\
+    \pdv[2]{(k^{2})} \qty[(E_f-\omega_{k2})^2-\omega_{P_fk1}^2]
+& = \frac{E_f}{2\omega_{k2}^3}-\frac{P_f}{2k^3}\,.
+\end{align}
+and we obtain
+\begin{align}
+    \lim_{k^{\star}_f\to q^\star_f} \frac{ k^{\star2}_f- q^{\star2}_f}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}
+    \bigg|_{\cos\theta=1}
+    = \frac{\beta  \gamma ^2 m_2^4}{E_f k^3-P_f\omega_{k2}^{3}}\,.
+\end{align}
+
+Then the result for the general case is
+\begin{equation}
+     \lim_{k^{\star}_f\to q^\star_f} \frac{ H(\bar{\alpha}, \textbf k) - 1}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}
+     = \frac{\bar \alpha(k^{2} - q^{\star 2}_i)\gamma ^2 \left(k \omega_{k2} \left(\beta ^2 \cos\theta^2+1\right)-(2 \beta  k^2 +\beta  m_2^2 )\cos\theta\right)}{E_f \,k-P_f \,\omega_{k2}\cos\theta }\,,
+\end{equation}
+for $\beta=0$ this would reduce to something equivalent to Eq.~\ref{eq:limitqist}, but replacing $i\to f$.
+This case would be important for $q^{\star2}_f=0$ and $\beta=0$, as otherwise we again obtian a vanishing denominator.
+
+Finally, for $\beta\neq0$, $\cos\theta=1$ and $q^{\star2}_f=0$ we get
+\begin{equation}
+    \lim_{k^{\star}_f\to q^\star_f} \frac{ H(\bar{\alpha}, \textbf k) - 1}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}
+    \bigg|_{\cos\theta=1,q^{\star}_f=0}
+    =\frac{-\bar \alpha(k^{2} - q^{\star 2}_i)\beta  \gamma ^2 m_2^4}{E_f k^3-P_f\omega_{k2}^{3}}\,.
+\end{equation}
+
+\subsubsection{Simultaneous on-shell conditions}
+
+To finalize this section we summarize the combination of the limits when both on-shell conditions happen for the same $k$,
+\begin{equation}
+    \lim_{k^{\star}_f\to q^\star_f,k\to q^\star_i}  (H(\bar{\alpha}, \textbf k) - 1)D(m,\mathbf k)
+    = \frac{\bar \alpha }{2E_i }\frac{\gamma ^2 \left(-k \omega_{k2} \left(\beta ^2 \cos\theta^2+1\right)+(2 \beta  k^2 +\beta  m_2^2 )\cos\theta\right)}{E_f \,k-P_f \,\omega_{k2}\cos\theta }\,,
+\end{equation}
+which needs to be specialized for the case of $q^\star_f=0$ to avoid evaluating vanishing denominators.
+For the case of $\beta=0$ we obtain
+\begin{equation}
+     \lim_{k^{\star}_f\to q^\star_f,k\to q^\star_i}  (H(\bar{\alpha}, \textbf k) - 1)D(m,\mathbf k)
+      \bigg|_{\beta=0,q^{\star}_f=0}
+      = -\frac{\bar \alpha \,m_2}{2E_iE_f}\,.
+\end{equation}
+while for the $\beta\neq0$, $\cos\theta=1$ case we obtain,
+\begin{equation}
+     \lim_{k^{\star}_f\to q^\star_f,k\to q^\star_i}  (H(\bar{\alpha}, \textbf k) - 1)D(m,\mathbf k)
+      \bigg|_{\beta\neq0,q^{\star}_f=0,\cos\theta=1}
+      = \frac{\bar \alpha }{2E_i}\frac{\beta  \gamma ^2 m_2^4}{E_f k^3-P_f\omega_{k2}^{3}}\,.
+\end{equation}
+
+
+
+
+
+% Create the reference section using BibTeX:
+\bibliography{biblio}
+
+\end{document}
+
+%----------------------------------------------------------------------------------------
+%       USEFUL EXAMPLES OF CODE AND EXPLANATIONS OF THE TEMPLATE
+%----------------------------------------------------------------------------------------
+
+% Put \label in argument of \section for cross-referencing
+%\section{\label{}}
+%\subsection{}
+%\subsubsection{}
+
+% If in two-column mode, this environment will change to single-column
+% format so that long equations can be displayed. Use
+% sparingly.
+%\begin{widetext}
+% put long equation here
+%\end{widetext}
+
+% figures should be put into the text as floats.
+% Use the graphics or graphicx packages (distributed with LaTeX2e)
+% and the \includegraphics macro defined in those packages.
+% See the LaTeX Graphics Companion by Michel Goosens, Sebastian Rahtz,
+% and Frank Mittelbach for instance.
+%
+% Here is an example of the general form of a figure:
+% Fill in the caption in the braces of the \caption{} command. Put the label
+% that you will use with \ref{} command in the braces of the \label{} command.
+% Use the figure* environment if the figure should span across the
+% entire page. There is no need to do explicit centering.
+
+% \begin{figure}
+% \includegraphics{}%
+% \caption{\label{}}
+% \end{figure}
+
+% Surround figure environment with turnpage environment for landscape
+% figure
+% \begin{turnpage}
+% \begin{figure}
+% \includegraphics{}%
+% \caption{\label{}}
+% \end{figure}
+% \end{turnpage}
+
+% tables should appear as floats within the text
+%
+% Here is an example of the general form of a table:
+% Fill in the caption in the braces of the \caption{} command. Put the label
+% that you will use with \ref{} command in the braces of the \label{} command.
+% Insert the column specifiers (l, r, c, d, etc.) in the empty braces of the
+% \begin{tabular}{} command.
+% The ruledtabular enviroment adds doubled rules to table and sets a
+% reasonable default table settings.
+% Use the table* environment to get a full-width table in two-column
+% Add \usepackage{longtable} and the longtable (or longtable*}
+% environment for nicely formatted long tables. Or use the the [H]
+% placement option to break a long table (with less control than 
+% in longtable).
+% \begin{table}%[H] add [H] placement to break table across pages
+% \caption{\label{}}
+% \begin{ruledtabular}
+% \begin{tabular}{}
+% Lines of table here ending with \
+% \end{tabular}
+% \end{ruledtabular}
+% \end{table}
+
+% Surround table environment with turnpage environment for landscape
+% table
+% \begin{turnpage}
+% \begin{table}
+% \caption{\label{}}
+% \begin{ruledtabular}
+% \begin{tabular}{}
+% \end{tabular}
+% \end{ruledtabular}
+% \end{table}
+% \end{turnpage}
+
+% Specify following sections are appendices. Use \appendix* if there
+% only one appendix.
+%\appendix
+%\section{}
+
+% If you have acknowledgments, this puts in the proper section head.
+%\begin{acknowledgments}
+% put your acknowledgments here.
+%\end{acknowledgments}
+
+%
+% ****** End of file apstemplate.tex ******
+
