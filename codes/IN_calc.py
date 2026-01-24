@@ -106,6 +106,11 @@ lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
+# -----------------
+# Result file:
+result_file = f'IN_sig_{indices[0]};{indices[1]};{indices[2]}_vecPf_{lab_moment_f_int}_vecPi_{lab_moment_i_int}.npy'
+filename = IN_folder + result_file
+
 # Energies from file
 with open(energ_file, 'rb') as f:
 
@@ -1159,13 +1164,8 @@ if axial:
         indices[0][0] = 3
 
 #Save the values
-filename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
-
 if not os.path.exists(IN_folder):
     os.makedirs(IN_folder)
-
-msgg = np.meshgrid(Eistar, Efstar)
 
 with open(filename, 'wb') as f:
 
