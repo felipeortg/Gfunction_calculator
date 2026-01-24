@@ -87,6 +87,12 @@ lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
+
+# -----------------
+# Result file:
+result_file = f'Sum_sig_{indices[0]};{indices[1]};{indices[2]}_vecPf_{lab_moment_f_int}_vecPi_{lab_moment_i_int}.npy'
+filename = sum_folder + result_file
+
 # Energies from file
 with open(energ_file, 'rb') as f:
 
@@ -109,8 +115,8 @@ trip_folder = './'
 
 # -----------------
 # Get the array of n triplets
-filename = trip_folder + 'triplets/n_list_r<' + str(cube_num) + '.txt'
-with open(filename, 'rb') as f:
+triplets_filename = trip_folder + 'triplets/n_list_r<' + str(cube_num) + '.txt'
+with open(triplets_filename, 'rb') as f:
     n_list = pickle.load(f)
 
 n_arr = np.array(n_list)
@@ -353,13 +359,8 @@ else:
 
 
 #Save the values
-filename = sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2])  + '_L_' + str(int(L)) + '.npy')
-
 if not os.path.exists(sum_folder):
     os.makedirs(sum_folder)
-
-msgg = np.meshgrid(Eistar, Efstar)
 
 with open(filename, 'wb') as f:
 

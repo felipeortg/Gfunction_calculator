@@ -97,6 +97,10 @@ lab_moment_i = (2*np.pi/L)*np.array(lab_moment_i_int)
 lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
 lab_moment_f = (2*np.pi/L)*np.array(lab_moment_f_int)
 
+# -----------------
+# Result file:
+result_file = f'IA_sig_{indices[0]};{indices[1]};{indices[2]}_vecPf_{lab_moment_f_int}_vecPi_{lab_moment_i_int}.npy'
+filename = IA_folder + result_file
 
 # Energies from file
 with open(energ_file, 'rb') as f:
@@ -144,23 +148,34 @@ def square_4vec(quadvec):
 # Singularities of the integrand
 def avoid_points(m1, m2, si, sf, q2):
 
+    avoid = []
+
     # Divergences due to the division
     AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
     
     AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
     
     AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
-    xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
-    
-    avoid = []
 
-    if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
+    if AA2pB_2 == 0 and AA2pB_1 == 0:
+        pass
+
+    elif AA2pB_2 == 0:
+        xx = np.roots([AA2pB_1,AA2pB_0])
         
-        if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
-            avoid.extend([xxs[0]])
-        if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
-            avoid.extend([xxs[1]])
+        if np.real(xx[0]) > 0 and np.real(xx[0]) < 1:
+            avoid.extend([xx[0]])
+
+    else:
+    
+        xxs = np.roots([AA2pB_2,AA2pB_1,AA2pB_0])
+
+        if np.angle(xxs[0])==0 or np.angle(xxs[0])==np.pi:
+            
+            if np.real(xxs[0]) > 0 and np.real(xxs[0]) < 1:
+                avoid.extend([xxs[0]])
+            if np.real(xxs[1]) > 0 and np.real(xxs[1]) < 1:
+                avoid.extend([xxs[1]])
     
     # Divergences due to the logarithm
     # Evaluate at the borders to find sign changes
@@ -539,12 +554,6 @@ def I34_tt(ls, ks):
     def imagF(x,ls,ks):
         return x * np.imag(F3_tt(x,ls,ks))
     
-    AA2pB_0 = (-4*m2**2)/si + (-m1**2 + m2**2 + si)**2/si**2 
-    
-    AA2pB_1 = ((-4*(m1**2 - m2**2 - sf))/si + (2*(q2 - sf - si)*(-m1**2 + m2**2 + si))/si**2)
-    
-    AA2pB_2 = ((q2 - sf - si)**2/si**2 - (4*sf)/si)
-    
     avoid = avoid_points(m1, m2, si, sf, q2)
             
     ff = integrate.quad(realF, 0, 1, args=([m1,m2],[q2,si,sf]), points = avoid)[0]
@@ -655,10 +664,10 @@ def make_int(P_i, P_f, index):
 
             Inu = P_f[index[0][0]] * I11_tt(lss, kss) + P_i[index[0][0]] * I12_tt(lss, kss)
 
-            # lower the indices or the spatial part
-            if index[0][0] != 0:
-                print("neg")
-                Inu *= -1 
+            # # lower the indices for the spatial part
+            # if index[0][0] != 0:
+            #     print("lowered indices")
+            #     Inu *= -1 
 
             integral += ccs[nn] * Inu
 
@@ -733,13 +742,8 @@ else:
 
 
 #Save the values
-filename = IA_folder + 'IA_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
-
 if not os.path.exists(IA_folder):
     os.makedirs(IA_folder)
-
-msgg = np.meshgrid(Eistar, Efstar)
 
 with open(filename, 'wb') as f:
 

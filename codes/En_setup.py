@@ -44,6 +44,25 @@ with open(config_file, 'r') as f:
         cval[key] = value
 
 
+# G-indexing
+indices = []
+for ll in cval['indices'].split():
+    nesttemplist = []
+    if ll != 'n':
+        for char in list(ll):
+            nesttemplist.append(int(char))
+
+    indices.append(nesttemplist)
+
+# Kinematics
+lab_moment_i_int = [int(ll) for ll in cval['Pi'].split()]
+lab_moment_f_int = [int(ll) for ll in cval['Pf'].split()]
+
+print("G-calculation En_setpup.py")
+print("𝜎;lfmf;limi;Pf;Pi")
+print(f'{indices[0]};{indices[1]};{indices[2]}_vecPf_{lab_moment_f_int}_vecPi_{lab_moment_i_int}')
+
+
 if cval['shape'] == 'mesh':
     # Shift Efstar by hand so that IN does not go into error
     shift = int(cval['shift'])

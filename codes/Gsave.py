@@ -87,10 +87,11 @@ Eistar = eners[0]
  
 Efstar = eners[1]
 
+result_file_ending = f'sig_{indices[0]};{indices[1]};{indices[2]}_vecPf_{lab_moment_f_int}_vecPi_{lab_moment_i_int}.npy'
+
 
 #Get sum values
-sumfilename = sum_folder + 'Sum_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2])  + '_L_' + str(int(L)) + '.npy')
+sumfilename = sum_folder + 'Sum_' + result_file_ending
 
 with open(sumfilename, 'rb') as f:
 
@@ -98,16 +99,14 @@ with open(sumfilename, 'rb') as f:
 
 
 #Get IN values
-INfilename = IN_folder + 'IN_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
+INfilename = IN_folder + 'IN_' + result_file_ending
 
 with open(INfilename, 'rb') as f:
 
     INN = np.load(f)
 
 #Get IA values
-IAfilename = IA_folder + 'IA_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npy')
+IAfilename = IA_folder + 'IA_' + result_file_ending
 
 with open(IAfilename, 'rb') as f:
 
@@ -136,8 +135,7 @@ IGfunction = np.imag( 1./(q2star_i**(li/2.)) * 1./(q2star_f**(lf/2.)) * (Sum - I
 
 
 # Save numpy array binaries
-binaryfilename =  G_folder + 'Bin_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.npz')
+binaryfilename =  G_folder + 'Bin_' + result_file_ending[:-3] + 'npz'
 
 with open(binaryfilename, 'wb') as f:
     np.savez_compressed(f,Eistar=Eistar, Efstar=Efstar,
@@ -147,8 +145,7 @@ with open(binaryfilename, 'wb') as f:
 
 
 # Save readable data of the sums and integrals
-readblefilename =  G_folder + 'Read_sig_[' + str(indices[0]) +';' +str(indices[1]) +';' +str(indices[2]) +(
-']_vecPi_' + str(lab_moment_i_int[2]) + '_vecPf_' + str(lab_moment_f_int[2]) + '_L_' + str(int(L)) + '.csv')
+readblefilename =  G_folder + 'Read_sig_' + result_file_ending[:-3] + 'csv'
 
 
 with open(readblefilename, 'w') as csvfile:
@@ -170,5 +167,5 @@ with open(readblefilename, 'w') as csvfile:
             flatRG[n], flatIG[n],
             flatReS[n], flatImS[n], flatReIA[n], flatImIA[n], flatReIN[n], flatImIN[n]])
 
-
-
+print('Saved to ', cval['folder'])
+print(binaryfilename, readblefilename)

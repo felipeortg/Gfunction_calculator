@@ -66,7 +66,7 @@ The numerical piece of the calculation of the finite volume triangle function $\
 The details given in Ref.~\cite{Baroni:2018iau}.
 However, this is achieved by the careful cancellation of singularities in different terms.
 Here we derive the limit of the integrand whenever individual terms have singularities, and a direct numerical evaluation  would be problematic.
-This would allow the code to directly evaluate the integrand near the singular points.
+This would allow the code to directly evaluate the integrand at the singular points.
 
 
 \section{Definitions}
@@ -128,14 +128,15 @@ D_{ri}(m, \textbf k) &=
 Here we specialize in the following case
 \begin{itemize}
     \item Number of indices is $N\leq 1$, which will be useful for a transition of an $S$-wave system via a vector current.
+    \item In particular we only need the case of the scalar integral, and the spatial piece of the vector integral.
     \item For these number of indices no subtractions are needed, i.e.\ $n_j=0$.
     \item As described in appendix B6 of Ref.~\cite{Baroni:2018iau}, this function is Lorentz covariant, so that we choose to evaluate it in the initial center of mass frame, with the final momentum aligned with the $z$-axis, such that
     \begin{equation}
     \label{eq:CMinitial}
         [\Lambda_{\pmb \beta_i}]^\mu{}_\nu \,P^\nu_i=(E_i^\star, \vb 0)\,,\quad [\Lambda_{\pmb \beta_i}]^\mu{}_\nu \, P_f^\nu=(E_{f,i}^\star, \mathbf P_{f,i}^\star)\,,\quad [R^{-1}_{\vu P_{f,i}}\Lambda_{\pmb \beta_i}]^\mu{}_\nu \, P_f^\nu=(E_{f,i}^\star, \abs{\mathbf P_{f,i}^\star}\vu z)\,,
     \end{equation}
-    where we can describe the kinematics in terms of the Lorentz invariants $s_i=P_i^2$, $s_f=P_f^2$ and $\gamma = P_i\cdot P_f/\sqrt{s_is_f}$, or alternatively the squares of $P_i$, $P_f$, and $q=P_f-P_f$.
-    \item This means that none of the propagators will carry any azimuthal dependence, and the azimuthal integral can be carried out analytically, only taking care of the numerator terms.
+    where we can describe the kinematics in terms of the Lorentz invariants $s_i=P_i^2$, $s_f=P_f^2$ and $\gamma = P_i\cdot P_f/\sqrt{s_is_f}$, or alternatively the squares of $P_i$, $P_f$, and $q=P_f-P_i$.
+    \item This means that none of the propagators will carry any azimuthal dependence, and the azimuthal integral can be carried out analytically, as it only needs taking care of phase terms in the numerator.
 \end{itemize}
 
 The scalar integral simplifies to
@@ -154,7 +155,7 @@ The scalar integral simplifies to
 The vector integral will be given by
 \begin{equation}
     \mathcal I^\mu_{\mathcal N}(\bar{\alpha}, P_f, P_i) = [(R_{\vu P_{f,i}}\Lambda_{\pmb \beta_i})^{-1}]^{\mu}{}_{\nu} \,
-    \mathcal I^\nu_{\mathcal N}(\bar{\alpha}, s_f, s_i, \gamma) 
+    \mathcal I^\nu_{\mathcal N}(\bar{\alpha}, s_f, s_i, \gamma) \bigg  |_{\vec{P}_i=0,\vec{P}_f=\abs{\vec{P}_f}\hat{z}}\,,
 \end{equation}
 where the quantity on the right hand side is zero except for $\mu=0$ and $\mu=3$,
 \begin{multline}
@@ -174,10 +175,21 @@ where the quantity on the right hand side is zero except for $\mu=0$ and $\mu=3$
 
 In what follows we will drop the notation from $k^\star_i$ to just $k$, and similarly with all other quantities, but we advise the reader that everything is evaluated in the frame described by Eq.~\ref{eq:CMinitial}.
 As an extra simplification we will change the notation in the following sections of the magnitude of the spatial integration momentum from $\abs{\textbf k^\star_i}$ to $k$.
+To avoid confusion, we add the index always to the four vector $k^\mu$, to distinguish it from the spatial momentum $k$.
 
 \section{Removable singularities}
 
-As mentioned before, certain terms of the integrand will be singular within the integration, in this section will look into each of these possible removable singularities from the integrand.
+As mentioned before, certain terms of the integrand will be singular within the integration, in this section we focus into each of these possible removable singularities from the integrand.
+
+The general idea is that the propagators will typically feature pole singularities
+\begin{equation}
+    D \sim \frac{1}{k^2-k^2_p}\,.
+\end{equation}
+These singularities will cancel in one of two ways, they will cancel against the term $H-1$ at on-shell values, or they will cancel between different propagator.
+The on-shell conditions refer to those with the masses of particles of interest.
+The poles on the $D_r$ propagators cancel in the combination $D_{rf}+D_{ri}$.
+
+
 
 \subsection{Singularities at on-shell conditions \texorpdfstring{$k^{\star2}=q^{\star2}$}{k*2=q*2}}
 
@@ -189,16 +201,26 @@ The two-pole propagator $D(m, \mathbf k)$ can be rewritten in the initial mass f
     \omega_{ki} &= \sqrt{k^2+m_i^2}\,,\\
     \omega_{P_fk1}& = \sqrt{k^2 -2 kP_{f}\cos\theta + P_f^2 +m_1^2}\,,
 \end{align}
-where $P_f=\abs{\mathbf P_f}$, and we can observe that poles will be present along the integration region whenever the integration variable takes the value of the relative momentum of the initial or final system, i.e. at $k=q_i^\star$, and at $k^\star_f=q_f^\star$.
+where $P_f=\abs{\mathbf P_f}\geq0$, and we can observe that poles will be present along the integration region whenever the integration variable takes the value of the relative momentum of the initial or final system, i.e.\ at $k=q_i^\star$, and at $k^\star_f=q_f^\star$.
 The relative momentum is given by
 \begin{equation}
-    q^\star(s,m_1,m_2) = \frac{1}{2\sqrt{s}}\sqrt{s^2+m_1^4+m_2^4-2(s\,m_1^2+s\,m_2^2+m_1^2m_2^2)} =\frac{1}{2\sqrt{s}}\sqrt{(s-(m_1+m_2)^2)(s-(m_1-m_2)^2)}\,.
+    q^\star(s) = \frac{1}{2\sqrt{s}}\sqrt{s^2+m_1^4+m_2^4-2(s\,m_1^2+s\,m_2^2+m_1^2m_2^2)} =\frac{1}{2\sqrt{s}}\sqrt{(s-(m_1+m_2)^2)(s-(m_1-m_2)^2)}\,.
 \end{equation}
 
-Each of these poles cancels exactly with the term $H(\bar{\alpha}, \textbf k)-1$, leaving only a finite result.
+Each of these poles cancels exactly with the term
+\begin{equation}
+    H(\bar{\alpha}, \textbf k)-1 = -\bar \alpha (k^{\star 2}_i - q^{\star 2}_i) (k^{\star 2}_f - q^{\star 2}_f)
+    +\mathcal{O}\qty([k^{\star2}-q^{\star2}]^2)\,,
+\end{equation}
+leaving only a finite result.
 
 
 \subsubsection{Initial energy on-shell singularity}
+
+In this case the term $H-1$ always has a term of order 1 in $k^2-q_i^{\star2}$.
+This is also the case for the propagator, as we are evaluating it in the initial frame.
+Therefore the limit of $(H-1)D$ can be easily found as the ratio of the derivatives with respect of $k^2$.
+
 To find this finite value we take the limit
 \begin{multline}
     \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) 
@@ -231,19 +253,187 @@ a third option, using the fact that,
     E_i^4-(m_1^2-m_2^2)^2 = 4E_i^2\omega_{k1}\omega_{k2}\bigg  |_{k=q_i^\star}\,,
 \end{equation}
 it somewhat simplifies to
-\begin{equation}
-    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) = 
+\begin{align}
+    \lim_{k\to q^\star_i}(H(\bar{\alpha}, \textbf k) - 1)D(m, \mathbf k) &= 
     \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{2E_i (E_f-E_i+\omega_{k1} - \omega_{P_fk1})
-  (E_f-E_i+\omega_{k1} + \omega_{P_fk1})}\bigg  |_{k=q_i^\star} \,.
-\end{equation}
+  (E_f-E_i+\omega_{k1} + \omega_{P_fk1})}\bigg  |_{k=q_i^\star} \,,\\
+  &= \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{2E_i ((E_f-\omega_{k2})^2- \omega_{P_fk1}^2)}\bigg  |_{k=q_i^\star} \,,
+\end{align}
 
 Another option to write minimal amount of code would be
 \begin{equation}\label{eq:limitqist}
     \lim_{k\to q^\star_i}\frac{H(\bar{\alpha}, \textbf k) - 1}{2\omega_{k2}[(E_i-\omega_{k2})^2-\omega_{k1}^2]}
     = \frac{\bar \alpha (k^{\star 2}_f - q^{\star 2}_f)}{2E_i}\,.
 \end{equation}
+This last equation is a consequence of the relationship
+\begin{equation}
+     \lim_{k_i^\star\to q^\star_i}
+  \frac{k_i^{\star2} - q^{\star 2}_i}{(E_i-\omega_{k2} + \omega_{k1})(E_i-\omega_{k2} - \omega_{k1})}
+  = -\frac{\omega_{k2}}{E_i}=-\frac{P_i\cdot k}{P_i^2}\bigg  |_{k^2=m_2^2} \,,
+  \label{eq:lorinvonshell}
+\end{equation}
+where we expressed the last equation in a frame invariant manner.
 
 \subsubsection{Final energy on-shell singularity}
+
+We can easily evaluate the limit in this case by noting that the quantity
+\begin{equation}
+    (E_f-\omega_{k2} - \omega_{P_fk1} )(E_f-\omega_{k2} + \omega_{P_fk1} )
+    = (P_f-k)^2-m_1^2\bigg|_{k^2=m_2^2}\,,
+\end{equation}
+is Lorentz invariant, so it can be evaluated in any frame.
+This leads to the result
+\begin{equation}
+    \lim_{k_f^\star\to q^\star_f}
+  \frac{k_f^{\star2} - q^{\star 2}_f}{(E_f-\omega_{k2} - \omega_{P_fk1} )(E_f-\omega_{k2} + \omega_{P_fk1} )}
+  = - \frac{\omega_{q2,f}^\star}{\omega_{q1,f}^\star+\omega_{q2,f}^\star}=-\frac{P_f\cdot k}{P_f^2}\bigg  |_{k^2=m_2^2}\,,
+\end{equation}
+where $\omega_{qi,f}^\star=\sqrt{q^{\star 2}_f+m_i^2}$, which is analogous to the result in Eq.~\eqref{eq:lorinvonshell}, because $\omega_{q1,f}^\star+\omega_{q2,f}^\star=\sqrt{s_f}$.
+
+In practice this can be implemented with the following
+\begin{equation}
+        \lim_{k_f^\star\to q^\star_f}\frac{H(\bar{\alpha}, \textbf k) - 1}{[(E_f-\omega_{k2})^2-\omega_{P_fk1}^2]}
+    = \frac{\bar \alpha (k^{\star 2}_i - q^{\star 2}_i)(E_f\omega_{k2}-P_fk\cos\theta)}{E_f^2-P_f^2}\bigg  |_{k_f^\star=q_f^\star} \,,
+\end{equation}
+or
+\begin{equation}
+        \lim_{k_f^\star\to q^\star_f}\frac{H(\bar{\alpha}, \textbf k) - 1}{[(E_f-\omega_{k2})^2-\omega_{P_fk1}^2]}
+    = \frac{\bar \alpha (k^{\star 2}_i - q^{\star 2}_i)\omega_{q2,f}^\star}{\sqrt{s_f}}\,.
+\end{equation}
+
+
+In App.~\ref{app:fs_sing} we leave a longer derivation, where this Lorentz invariance is not exploited, but everything is left as a function of the variables in the initial frame.
+This was checked numerically to be equivalent to the result above.
+
+
+
+\subsubsection{Simultaneous on-shell conditions}
+
+To finalize this section we summarize the combination of the limits when both on-shell conditions happen for the same $k$,
+\begin{equation}
+    \lim_{k^{\star}_f\to q^\star_f,k\to q^\star_i}  (H(\bar{\alpha}, \textbf k) - 1)D(m,\mathbf k)
+    = - \frac{\bar{\alpha}(E_f\omega_{k2}-P_fk\cos\theta)}{2E_i(E_f^2-P_f^2)}\,.
+\end{equation}
+
+
+
+
+
+\subsection{Cancellation of unphysical poles in \texorpdfstring{$D_{rf}$ and $D_{ri}$}{Drf and Dri}}
+
+The terms $D_{rf}$ and $D_{ri}$ arise from the $k^0$ poles different from $\omega_{k2}$ in the contour integration from which $\mathcal I_{\mathcal N}$ was derived.
+Specifically these are the poles at $k^0$ equal to $E_f+\omega_{P_fk1}$ and $E_i+\omega_{P_ik1}$.
+These two terms generically have poles in the integration region, which are known to arise for the same value of the integration loop variable $\mathbf k$ for both, and to have equal but opposite sign for their residue.
+This renders their sum a finite and smooth function of the integration variable.
+When evaluated numerically a large cancellation needs to happen, which can be numerically unstable, with the worst happening if evaluated exactly at the pole.
+
+To evaluate them at the pole we again calculate the limit analytically to be implemented for numerical evaluation.
+For convenience we will label $k_r$ the location of the pole in $k$ space, so that we need to compute.
+\begin{equation}
+    \lim_{k\to k_r} \mathcal{K}^{(\mu)}_{r}(m, \mathbf k)
+    = \lim_{k\to k_r}
+ D_{rf} (m, \mathbf k)\mathcal{N}^{(\mu)}(E_f+\omega_{P_fk1},\mathbf k)
+ +D_{ri}(m, \mathbf k)\mathcal{N}^{(\mu)}(E_i+\omega_{k1},\mathbf k)
+    \,.\label{eq:Kr}
+\end{equation}
+
+The origin of the common pole can be easily traced to the term
+\begin{equation}
+    \frac{1}{E_i-E_f-\omega_{P_fk1}+\omega_{k1}}\sim (k^2-k_{\text{P}}^2)^{-1}
+\end{equation}
+If we factor explicitly this term from the $D_r$ terms we get
+\begin{align}
+    D_{rf}(m, \textbf k) &=
+\frac{1}{2 \omega_{P_fk1}}
+\frac{1}
+  { ( E_f+\omega_{P_fk1})^2 - \omega_{k2}^2  }
+\frac{ 1} 
+{  (E_i-E_f-\omega_{P_fk1} - \omega_{k1} )(E_i-E_f-\omega_{P_fk1} + \omega_{k1})  } \,, \label{eq:Drf_factor}\\
+D_{ri}(m, \textbf k) &=
+\frac{1}{2 \omega_{k1}}
+\frac{1}
+  { ( E_i+\omega_{k1})^2 - \omega_{k2}^2   } 
+\frac{ 1} 
+{  (E_f-E_i-\omega_{k1}  - \omega_{P_fk1} )(E_f-E_i-\omega_{k1}  + \omega_{P_fk1})   }  \,. \label{eq:Dri_factor}
+\end{align}
+
+To obtain the limit at the removable singularity we obtain the derivatives with respect to $k^2$ at the pole location.
+We treat the term with the pole as the denominator that goes to zero, and factor everything else as a numerator that will also go to zero.
+
+The derivative of the denominator is equal to
+\begin{equation}
+    \pdv{k^{2}}(E_i-E_f-\omega_{P_fk1}+\omega_{k1})\bigg|_{k^2=k^2_\text{P}}
+    = \frac{E_i-E_f+\omega_{k1}P_f\cos\theta/k}{2\omega_{k1}\omega_{P_fk1}}\,,
+\end{equation}
+where we also used the fact that for $k^2=k^2_\text{P}$, $E_i+\omega_{k1}=E_f+\omega_{P_fk1}$.
+
+
+For the numerator we first focus on the scalar or $\mu=3$ case, where we only have to take into account the terms in Eqs.~\eqref{eq:Drf_factor}~and~\eqref{eq:Dri_factor}.
+The derivative of the numerator is equal to
+\begin{multline}
+    \pdv{k^{2}}\qty[(E_i-E_f-\omega_{P_fk1}+\omega_{k1})(D_{rf}(m, \mathbf k)+ D_{ri}(m, \mathbf k)]=\\
+    \frac{E_f-E_i-\omega_{k1}P_f\cos\theta/k}{4\omega_{k1}\omega_{P_fk1}}
+    \times
+    \frac{\omega_{P_fk1}(E_i^2+5\omega_{k1}^2+6E_i\omega_{k1}-\omega_{k2}^2)+\omega_{k1}((E_i+\omega_{k1})^2-\omega_{k2}^2)}
+    {[\omega_{k1}
+    ((E_i+\omega_{k1})^2 - \omega_{k2}^2)
+    (E_f-E_i-\omega_{k1} - \omega_{P_fk1})]^2}\,,
+\end{multline}
+which has a factor that exactly cancels the derivative of the denominator, so that the limit at the removable singularity is
+\begin{equation}
+    \lim_{k\to k_P}
+    \qty[D_{rf}(m, \mathbf k)+ D_{ri}(m, \mathbf k)]
+    = -
+    \frac{\omega_{P_fk1}(E_i^2+5\omega_{k1}^2+6E_i\omega_{k1}-\omega_{k2}^2)+\omega_{k1}((E_i+\omega_{k1})^2-\omega_{k2}^2)}
+    {8[\omega_{k1}\omega_{P_fk1}
+    ((E_i+\omega_{k1})^2 - \omega_{k2}^2)]^2}\,.
+\end{equation}
+
+In the case of $\mu=0$, we need to take into account the numerator in Eq.~\eqref{eq:Kr}.
+The derivative, adding these terms, is equal to 
+\begin{multline}
+    \pdv{k^{2}}\qty[(E_i-E_f-\omega_{P_fk1}+\omega_{k1})(D_{rf}(m, \mathbf k)(E_f+\omega_{P_fk1})+ D_{ri}(m, \mathbf k)(E_i+\omega_{k1})]=\\
+    \frac{E_f-E_i-\omega_{k1}P_f\cos\theta/k}{4\omega_{k1}\omega_{P_fk1}}
+    \times\\
+\frac{\omega _{P_fk1}\left(\omega _{k2}^2 \left(\omega _{k1}-E_i\right)+\left(E_i+\omega
+   _{k1}\right)^2 \left(E_i+3 \omega _{k1}\right)\right)+\omega _{k1}\left(E_i+\omega
+   _{k1}\right) \left(\left(E_i+\omega _{k1}\right)^2-\omega _{k2}^2\right)}{[\omega
+   _{k1} ((E_i+\omega _{k1})^2-\omega _{k2}^2)
+   (E_f-E_i-\omega _{k1}-\omega _{P_fk1})]^2}\,,
+\end{multline}
+which features the same factor as with the scalar case, and leads to the limit value of
+\begin{multline}
+       \lim_{k\to k_P}
+    \qty[(D_{rf}(m, \mathbf k)(E_f+\omega_{P_fk1})+ D_{ri}(m, \mathbf k)(E_i+\omega_{k1})]
+    =\\ - \frac{\omega _{P_fk1}\left(\omega _{k2}^2 \left(\omega _{k1}-E_i\right)+\left(E_i+\omega
+   _{k1}\right)^2 \left(E_i+3 \omega _{k1}\right)\right)+\omega _{k1}\left(E_i+\omega
+   _{k1}\right) \left(\left(E_i+\omega _{k1}\right)^2-\omega _{k2}^2\right)}
+   {8[\omega_{k1}\omega _{P_fk1} ((E_i+\omega _{k1})^2-\omega _{k2}^2)]^2}\,.
+\end{multline}
+
+As an alternative it can also be noted that
+\begin{multline}
+    \lim_{k\to k_P}
+    \qty[(D_{rf}(m, \mathbf k)(E_f+\omega_{P_fk1})+ D_{ri}(m, \mathbf k)(E_i+\omega_{k1})]
+    \\= (E_i+\omega_{k1})\lim_{k\to k_P}
+    \qty[(D_{rf}(m, \mathbf k)+ D_{ri}(m, \mathbf k)]
+    + \lim_{k\to k_P}(E_i-E_f-\omega_{P_fk1}+\omega_{k1})D_{ri}(m, \mathbf k)\,.
+\end{multline}
+\begin{equation}
+    = (E_i+\omega_{k1})\lim_{k\to k_P}
+    \qty[(D_{rf}(m, \mathbf k)+ D_{ri}(m, \mathbf k)]
+    + \frac{1}{4\omega_{k1}\omega _{P_fk1} ((E_i+\omega _{k1})^2-\omega _{k2}^2)}
+\end{equation}
+
+
+% Create the reference section using BibTeX:
+\bibliography{biblio}
+
+\appendix
+\section{Final state on shell singularity as a function of the initial frame variables}
+\label{app:fs_sing}
+
+This case has a small subtlety in that the term $H-1$ when expanded around its zero near $q_f^{\star2}$, the first order term might vanish, in which case $H-1 \sim \mathcal{O}((k^2-k_p^2)^2)$.
 
 Since we evaluate the integral in the initial center of mass frame, the expression for the value of $k$ so that $k^\star_f=q^\star_f$ is a little more complicated, and similarly the evaluation of the limit.
 Nonetheless, this condition is equivalent to
@@ -256,18 +446,18 @@ The precise definition of $k^\star_f$ is given by
 \end{equation}
 where $\beta=(1-\gamma^{-2})^{1/2}$, the square of which is equal to
 \begin{equation}
-    k^{\star2}_f=\gamma^2k^2+\beta\gamma^2(\beta k^2\cos\theta^2-2k\,\omega_{k2}\cos\theta+\beta m_2^2)\,,
+    k^{\star2}_f=\gamma^2k^2+\beta\gamma^2(\beta k^2\cos\theta^2-2k\,\omega_{k2}\cos\theta+\beta m_2^2)\,,\label{eq:kfst}
 \end{equation}
 in terms of $k^2$, $\cos\theta$, $\gamma$ and $m_2$.
 We will need the derivative with respect to $k^2$
 \begin{equation}
-    \pdv{k^{\star2}_f}{k^{2}}= \gamma^2+ \beta\gamma^2\qty(\beta \cos\theta^2 -\frac{2k^2+m^2_2}{k\,\omega_{k2}} \cos\theta)\,.
+    \pdv{k^{\star2}_f}{k^{2}}= \gamma^2+ \beta\gamma^2\qty(\beta \cos\theta^2 -\frac{2k^2+m^2_2}{k\,\omega_{k2}} \cos\theta)\,.\label{eq:derkfst}
 \end{equation}
 
 To obtain the limit of interest we also need the derivative of the pole associated with the final states on shell.
 We get a simpler result if we consider the two poles of the $P_f-k$ propagator,
 \begin{equation}
-    \pdv{k^{2}}(E_f-\omega_{k2} - \omega_{P_fk1} )(E_f-\omega_{k2} + \omega_{P_fk1} ) = -\frac{E_f}{\omega_{k2}}+\frac{P_f\cos\theta}{k}\,.
+    \pdv{k^{2}}\qty[(E_f-\omega_{k2} - \omega_{P_fk1} )(E_f-\omega_{k2} + \omega_{P_fk1} )] = -\frac{E_f}{\omega_{k2}}+\frac{P_f\cos\theta}{k}\,.
 \end{equation}
 
 Combining this equations we obtain
@@ -283,7 +473,32 @@ which further simplifies in the case $\beta=0$,
 \end{equation}
 which is what we also found for the initial state case.
 
-There is a small caveat in that if $\beta>0$ and $q_f^\star=0$, both of the derivatives that we calculated vanish for $\cos\theta=1$, precisely at $k^{\star2}_f=0$.
+This expression can be further simplified by noting that
+\begin{align}
+    (k- \beta\cos\theta\,\omega_{k2})(\beta\cos\theta\, k - \omega_{k2})
+    &= -k\omega_{k2}(\beta^2\cos\theta^2+1) + \beta\cos\theta(2k^2+m_2^2)\,,\\
+    E_f \,k-P_f \,\omega_{k2}\cos\theta &= \gamma\sqrt{s_f}(k-\beta\cos\theta\,\omega_{k2})\,,
+\end{align}
+so that we obtain
+\begin{equation}
+     \lim_{k^{\star}_f\to q^\star_f} \frac{ k^{\star2}_f- q^{\star2}_f}{(E_f-\omega_{k2})^2-\omega_{P_fk1}^2}
+     = -\frac{\gamma(\omega_{k2}-\beta\cos\theta\,k)}{\sqrt{s_f}}= -\frac{E_f\omega_{k2}-P_f\,k\cos\theta}{E_f^2-P_f^2}.
+\end{equation}
+
+There is a small caveat in that if $\beta>0$, both of the derivatives that we calculated could vanish for values of $q_f^\star<\gamma \beta m_2$.
+In that case the on-shell condition is restricted for $\cos\theta>0$, since for negative values of $\cos\theta$ the quantity $k^\star_f$ is increases monotonically, with minimum value $\gamma \beta m_2$.
+We have to solve for $k$ and $\cos\theta$, using the condition $k^{\star}_f= q^\star_f$ with Eq.~\eqref{eq:kfst} and $\pdv{k^{\star2}_f}{k^{2}} =0$ from Eq.~\eqref{eq:derkfst}.
+
+The above procedure yields the values of 
+\begin{align}
+    k &= \frac{ m_2 \beta\cos\theta}{\sqrt{1-\beta ^2 \cos\theta^2}}\\
+    \cos\theta &= \sqrt{1-\frac{q_f^{\star2}}{\beta ^2 \gamma ^2 m^2_2}}
+\end{align}
+for which the expression $k_f^{\star2}-q_f^{\star2}=\mathcal{O}(k^2)$.
+The condition in $k$ was derived from $\pdv{k^{\star2}_f}{k^{2}}=0$ from Eq.~\eqref{eq:derkfst} and demanding $k$ to be real and positive.
+
+
+
 For that case we need the second order derivatives
 \begin{align}
     \pdv[2]{k^{\star2}_f}{(k^{2})}&= \beta  \gamma ^2 \left(\frac{\omega_{k2} }{2 k^{3}}-\frac{1}{k\, \omega_{k2}}+\frac{k
@@ -313,9 +528,8 @@ Finally, for $\beta\neq0$, $\cos\theta=1$ and $q^{\star2}_f=0$ we get
     =\frac{-\bar \alpha(k^{2} - q^{\star 2}_i)\beta  \gamma ^2 m_2^4}{E_f k^3-P_f\omega_{k2}^{3}}\,.
 \end{equation}
 
-\subsubsection{Simultaneous on-shell conditions}
 
-To finalize this section we summarize the combination of the limits when both on-shell conditions happen for the same $k$,
+When we want to use this in the case of initial and final poles we get
 \begin{equation}
     \lim_{k^{\star}_f\to q^\star_f,k\to q^\star_i}  (H(\bar{\alpha}, \textbf k) - 1)D(m,\mathbf k)
     = \frac{\bar \alpha }{2E_i }\frac{\gamma ^2 \left(-k \omega_{k2} \left(\beta ^2 \cos\theta^2+1\right)+(2 \beta  k^2 +\beta  m_2^2 )\cos\theta\right)}{E_f \,k-P_f \,\omega_{k2}\cos\theta }\,,
@@ -333,13 +547,6 @@ while for the $\beta\neq0$, $\cos\theta=1$ case we obtain,
       \bigg|_{\beta\neq0,q^{\star}_f=0,\cos\theta=1}
       = \frac{\bar \alpha }{2E_i}\frac{\beta  \gamma ^2 m_2^4}{E_f k^3-P_f\omega_{k2}^{3}}\,.
 \end{equation}
-
-
-
-
-
-% Create the reference section using BibTeX:
-\bibliography{biblio}
 
 \end{document}
 
