@@ -202,16 +202,46 @@ class IN_calculator:
 
         self.P_f = np.array([E_final, self.Pf[0], self.Pf[1], self.Pf[2]])
 
-        coeffs, list_indices = get_rotboost_indices(indices, self.P_i, self.P_f)
+
+        #scalar case, nothing to do
+        if len(indices[0]) == 0:
+            result =  self.axial_int(indices)
+
+        # Calculate the four components if vector version is requested ...
+        # vector case, one boost/rotation
+        elif len(indices[0]) == 1:
+            vector_list = [[[0],*indices[1:]], [[1],*indices[1:]], [[2],*indices[1:]], [[3],*indices[1:]]]
+
+            coeffs_list = []
+            boost_indices_list = []
+
+            for ix in vector_list:
+                coeffs, rotboost_indices = get_rotboost_indices(ix, self.P_i, self.P_f)
+                coeffs_list.append(coeffs)
+                boost_indices_list.append(rotboost_indices)
+ 
+
+            IN_axial_frame = []
+            # for the axial integral only two-components need to be calculated
+            for component in range(2):
+                coeff_sum_abs = 0
+                for cc in coeffs_list:
+                    coeff_sum_abs += np.abs(cc[component])
+
+                if coeff_sum_abs == 0:
+                    IN_axial_frame.append(0)
+                    continue
+
+                IN_axial_frame.append(self.axial_int(boost_indices_list[0][component]))
+
+            coeffs_list = np.array(coeffs_list)
+
+            result = coeffs_list @ IN_axial_frame
 
 
-        result = 0
+        else:
+            raise ValueError("Only implemented up to vector")
 
-        for coef, ix in zip(coeffs, list_indices):
-            if coef==0:
-                continue
-
-            result += coef * self.axial_int(ix)
 
         return result
 
